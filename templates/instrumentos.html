@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Instrumentos</h1>
+</div>
+<div class="col s12">
+    <table class="das-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Núcleo</th>
+                <th colspan="2">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrumento in object_list %}
+                <tr>
+                    <td>{{ instrumento.id }}</td>
+                    <td>{{ instrumento.nombre }}</td>
+                    <td>{{ instrumento.nucleo }}</td>
+                    <td>{{ instrumento.fecha }}</td>
+                    <td style="width: 150px;">
+                        <a href="{% url 'principal:instrumento' instrumento.id %}" class="lan-btn black"><i class="fa fa-eye"></i></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

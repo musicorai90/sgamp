@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Asignaciones</h1>
+</div>
+<div class="col s12">
+    <table class="das-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;">#</th>
+                <th>Fecha</th>
+                <th>Instrumento</th>
+                <th>Alumno</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asignacion in objects_list %}
+                <tr>
+                    <td>{{ asignacion.id }}</td>
+                    <td>{{ asignacion.fecha }}</td>
+                    <td>{{ asignacion.instrumento }}</td>
+                    <td>{{ asignacion.musico }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

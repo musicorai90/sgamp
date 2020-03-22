@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s4">
+			<img class="das-img" src="{% static 'MaterialDark/assets/img/profile.png' %}" alt="perfil orquesta">
+		</div>
+		<div class="col s8">
+			<h1 class="das-perfil-title">Roberto Rosales</h1>
+			<div class="row">
+				<div class="col s12">
+					<p class="das-perfil-cargo">Gerente estadal</p>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Cédula:</span>
+					<span>27350033</span>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Teléfono:</span>
+					<span>+58 424 1234567</span>
+				</div>
+				<div class="col 12">
+					<span class="das-perfil-subtitle">Dirección:</span>
+					<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi, voluptas.</span>
+				</div>
+			</div>
+		</div>
+		<div class="col s12 lan-btn-content">
+			<button onclick="document.getElementById('das-perfil-img').click();" class="lan-btn black">Cambiar foto</button>
+			<input style="display: none;" onchange="openFile(event);" type="file" id="das-perfil-img">
+			<a href="{% url 'principal:modificarPerfil' %}" class="lan-btn">Modificar perfil</a>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Trigger -->
+<a class="waves-effect waves-light btn modal-trigger" style="display: none;" id="das-img-btn" href="#modal1">Modal</a>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+	<div class="modal-content">
+		<div class="das-title">
+		    <h1>Nueva imagen</h1>
+		</div>
+		<img id="das-img-new" style="width: 100%;" alt="">
+		<div class="lna-btn-content center">
+			<button class="lan-btn black">Cambiar</button>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

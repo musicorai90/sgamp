@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Detalles del Instrumento</h1>
+</div>
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Nombre:</span>
+			<span>{{ object.nombre }}</span>
+		</div>
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Código:</span>
+			<span>{{ object.codigo }}</span>
+		</div>
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Núcleo:</span>
+			<span>{{ object.nucleo }}</span>
+		</div>
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Fecha:</span>
+			<span>{{ object.fecha }}</span>
+		</div>
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Marca:</span>
+			<span>{{ object.marca }}</span>
+		</div>
+		<div class="col s6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Status:</span>
+			<span>{{ object.tipo_text }}</span>
+		</div>
+		<div class="col s12 mb-c8 bb">
+			<span class="das-perfil-subtitle">Características:</span>
+			<p>{{ object.caracteristicas }}</p>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

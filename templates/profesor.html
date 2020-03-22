@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s4">
+			<img class="das-img" src="{% static 'MaterialDark/assets/img/profile.png' %}" alt="perfil orquesta">
+		</div>
+		<div class="col s8">
+			<h1 class="das-perfil-title">{{ object.nombre }} {{ object.apellido }}</h1>
+			<div class="row">
+				<div class="col s12">
+					<p class="das-perfil-cargo">Profesor</p>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Cédula:</span>
+					<span>{{ object.cedula }}</span>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Teléfono:</span>
+					<span>{{ object.telefono }}</span>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Cátedra:</span>
+					<span>{{ object.catedra }}</span>
+				</div>
+				<div class="col mb-c8 s12">
+					<span class="das-perfil-subtitle">Fecha de ingreso:</span>
+					<span>{{ object.fecha }}</span>
+				</div>
+				<div class="col 12">
+					<span class="das-perfil-subtitle">Dirección:</span>
+					<span>{{ object.direccion }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

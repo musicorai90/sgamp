@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Bienvenido</h1>
+</div>
+{% if tipo == 'CR' or tipo == 'PR' or tipo == 'ES'  %}
+<div class="col s12">
+    <ul class="biblioteca-box">
+        <li class="partitura"><a href="#"><span>Sistema de escalas de Carl Flesh</span><span>Subida por Raimon Guanay</span></a></li>
+        <li class="partitura"><a href="#"><span>Kreutzer - Galamian Edition</span><span>Subida por Raimon Guanay</span></a></li>
+        <li class="partitura"><a href="#"><span>Dont - Galamian Edition</span><span>Subida por Raimon Guanay</span></a></li>
+    </ul>
+</div>
+{% else %}
+<article class="col s12">
+    <div class="full-width center-align">
+        <div class="tile">
+            <div class="tile-icon"><i class="fa fa-couch"></i></div>
+            <div class="tile-caption">
+                <span class="center-align">{{ bienes }}</span>
+                <p class="center-align">Bienes</p>   
+            </div>
+            <!--<a href="#" class="tile-link waves-effect waves-light">Ver &nbsp; <i class="zmdi zmdi-caret-right-circle"></i></a>-->
+        </div>
+        <div class="tile">
+            <div class="tile-icon"><i class="fa fa-drum"></i></div>
+            <div class="tile-caption">
+                <span class="center-align">{{ instrumentos }}</span>
+                <p class="center-align">Instrumentos</p>   
+            </div>
+            <!--<a href="#" class="tile-link waves-effect waves-light">Ver &nbsp; <i class="zmdi zmdi-caret-right-circle"></i></a>-->
+        </div>
+        <div class="tile">
+            <div class="tile-icon"><i class="fa fa-users"></i></div>
+            <div class="tile-caption">
+                <span class="center-align">{{ profesores }}</span>
+                <p class="center-align">Profesores</p>   
+            </div>
+            <!--<a href="#" class="tile-link waves-effect waves-light">Ver &nbsp; <i class="zmdi zmdi-caret-right-circle"></i></a>-->
+        </div>
+        <div class="tile">
+            <div class="tile-icon"><i class="fa fa-users"></i></div>
+            <div class="tile-caption">
+                <span class="center-align">{{ alumnos }}</span>
+                <p class="center-align">Alumnos</p>   
+            </div>
+            <!--<a href="#" class="tile-link waves-effect waves-light">Ver &nbsp; <i class="zmdi zmdi-caret-right-circle"></i></a>-->
+        </div>
+        <div class="tile">
+            <div class="tile-icon"><i class="fa fa-couch"></i></div>
+            <div class="tile-caption">
+                <span class="center-align">{{ asignaciones }}</span>
+                <p class="center-align">Asignaciones</p>   
+            </div>
+            <!--<a href="#" class="tile-link waves-effect waves-light">Ver &nbsp; <i class="zmdi zmdi-caret-right-circle"></i></a>-->
+        </div>
+    </div>   
+</article>
+{% endif %}
+
+<!--<div class="col s12 das-title">
+    <h1>Bienes</h1>
+</div>
+<div class="col s12">
+    <table class="das-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Núcleo</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Bien</td>
+                <td>Núcleo</td>
+                <td>DD-MM-AA</td>
+            </tr>
+        </tbody>
+    </table>
+</div>-->
+
+{% endblock %}

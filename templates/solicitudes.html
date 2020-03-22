@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Solicitudes</h1>
+</div>
+<div class="col s12">
+    <table class="das-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;">#</th>
+                <th>Núcleo</th>
+                <th>Fecha</th>
+                <th colspan="2">Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes %}
+                <tr>
+                    <td>{{ solicitud.id }}</td>
+                    <td>{{ solicitud.nucleo }}</td>
+                    <td>{{ solicitud.fecha }}</td>
+                    <td style="padding: .5rem; display: flex; justify-content: center;">
+                        {% if solicitud.status == 'L' %}
+                            <span class="f-status aprobada">Lista</span>
+                        {% else %}
+                            <span class="f-status espera">En espera</span>
+                        {% endif %}
+                    </td>
+                    <td style="width: 100px;">
+                        {% if solicitud.tipo == 'B' %}
+                            <a href="{% url 'principal:solicitudBien' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                        {% else %}
+                            <a href="{% url 'principal:solicitudInstrumento' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination f-pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primero</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+{% endblock %}

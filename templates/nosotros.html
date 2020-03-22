@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>OSRJG</title>
+	<link rel="stylesheet" href="{% static 'lib/fontawesome/css/all.css' %}">
+	<link rel="stylesheet" href="{% static 'lib/materialize/css/materialize.min.css' %}">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+	<header class="lan-header" id="lan-header">
+		<nav class="lan-header-nav">
+			<ul>
+				<li><a href="{% url 'principal:index' %}"><i class="fa fa-home"></i></a></li>
+			</ul>
+		</nav>
+		<a href="{% url 'principal:login' %}" class="lan-btn sticky" id="lan-btn-sticky">ENTRAR</a>
+	</header>
+	<main>
+		<div class="lan-main">
+			<img class="lan-main-img" src="{% static 'img/banner.jpg' %}" alt="orquesta guanare">
+			<h1 class="lan-title">
+				<img src="{% static 'img/logo.png' %}" alt="orquesta logo">
+			</h1>
+			<p class="lan-subtitle">Sistema de Orquesta y Coros Juveniles e Infantiles del Estado Portuguesa</p>
+			<div class="lan-btn-content">
+				<a href="{% url 'principal:login' %}" class="lan-btn">ENTRAR</a>
+			</div>
+		</div>
+		<section class="lan-contacto">
+			<h2 class="lan-title lan-title-galeria">NOSOTROS</h2>
+			<div class="row lan-contacto-view">
+				<div class="col-12">
+					<h3 class="lan-title">Reseña histórica</h3>
+					<p class="lan-nos-content">Fue fundado por iniciativa del doctor Francisco Betancourt en Agosto 1979, bajo la dirección artística de Henry Zambrano, dirección general de Raúl Díaz, la coordinación de Aida de Betancourt y en el apoyo docente de la orquesta de Lara. Es una institución de 36 años de exitosa trayectoria y en ella se han formado músicos de alto nivel que en la actualidad nos representan dignamente dentro y fuera del país. Atiende una población de 750 niños de todos los estratos sociales en canto coral e instrumento sinfónico o tradicional venezolanos. Han sido sus directores musicales Raúl Díaz, Henry Zambrano, René Álvarez, Marcos Pérez y en la actualidad la maestra Raquel Castillo.</p>
+					<h3 class="lan-title">Misión</h3>
+					<p class="lan-nos-content">El rescate pedagógico, ocupacional y ético de la infancia y la juventud, mediante la instrucción y la práctica colectiva de la música, dedicada a la capacitación, prevención y recuperación de los grupos más vulnerables de la región, tanto por sus características etarias como por su situación socioeconómica.</p>
+					<h3 class="lan-title">Visión</h3>
+					<p class="lan-nos-content">Es una institución abierta a  toda la sociedad, con un alto concepto de excelencia musical, que contribuye al desarrollo integral del ser humano. Se vincula con la comunidad a través del intercambio la cooperación y el cultivo de valores transcendentales que inciden en la transformación del niño, el joven y el entorno familiar. Se cuenta con un recurso humano dirigido al logro de una meta común, con mística y gozo, formando equipos multidisciplinarios altamente motivados e identificados con la institución. Se reconoce al movimiento orquestal como una oportunidad para el desarrollo personal en lo intelectual, lo espiritual,  lo social y en lo profesional, rescatando al niño y al joven de una juventud vacía, desorientada y desviada.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="lan-footer">
+		<a href="#" style="background: #0d47a1; color: #ffffff;"><i class="fab fa-facebook"></i></a>
+		<a href="#" style="background: #039be5; color: #ffffff;"><i class="fab fa-twitter"></i></a>
+		<a href="#" style="background: linear-gradient(#311b92 20%,#f57f17); color: #ffffff;"><i class="fab fa-instagram"></i></a>
+	</footer>
+
+	<script type="text/javascript" src="{% static 'lib/materialize/js/materialize.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Alumnos</h1>
+</div>
+<div class="col s12">
+    <table class="das-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Núcleo</th>
+                <th colspan="2">Instrumento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for musico in object_list %}
+                {% if musico.tipo == 'A' %}
+                    <tr>
+                        <td>{{ musico.id }}</td>
+                        <td>{{ musico.nombre }} {{ musico.apellido }}</td>
+                        <td>{{ musico.nucleo }}</td>
+                        <td>{{ musico.catedra }}</td>
+                        <td style="width: 150px;">
+                            <a href="{% url 'principal:alumno' musico.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

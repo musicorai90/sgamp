@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Modificar perfil</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form">
+    	<div class="input-field col s6">
+            <input placeholder="Cédula" type="text" id="cedula" class="validate" required>
+            <label for="cedula">Cédula</label>
+        </div>
+        <div class="input-field col s6">
+            <input placeholder="Nombre" type="text" id="nombre" class="validate" required>
+            <label for="nombre">Nombre</label>
+        </div>
+        <div class="input-field col s6">
+            <input placeholder="Apellido" type="text" id="apellido" class="validate" required>
+            <label for="apellido">Apellido</label>
+        </div>
+        <div class="input-field col s6">
+            <input placeholder="Teléfono" type="text" id="telefono" class="validate" required>
+            <label for="telefono">Teléfono</label>
+        </div>
+        <div class="input-field col s12">
+			<textarea id="direccion" placeholder="Dirección" class="materialize-textarea"></textarea>
+			<label for="direccion">Dirección</label>
+		</div>
+		<div class="col s12 lan-btn-content">
+			<input type="submit" value="Modificar" class="lan-btn">
+		</div>
+    </form>
+</div>
+
+{% endblock %}

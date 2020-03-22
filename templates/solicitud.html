@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Detalles de Solicitud</h1>
+</div>
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Núcleo:</span>
+			<span>{{ object.nucleo }}</span>
+		</div>
+		<div class="col s4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Tipo:</span>
+			<span>{% if object.tipo == 'B' %} Bienes {% else %} Instrumentos {% endif %}</span>
+		</div>
+		<div class="col s4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Fecha:</span>
+			<span>{{ object.fecha }}</span>
+		</div>
+		<div class="col s12 mb-c8 bb">
+			<span class="das-perfil-subtitle">Mensaje:</span>
+			<p>{{ object.mensaje }}</p>
+		</div>
+		<form method="post" class="col s12 mb-c8 bb">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col s12">
+					<span class="das-perfil-subtitle">{% if object.tipo == 'B' %}Bienes{% else %}Instrumentos{% endif %} solicitados:</span>
+					<table class="das-table" style="margin-top: 1rem;">
+						<thead>
+							<tr>
+								<th>Nombre</th>
+								<th>Cantidad Solicitada</th>
+								<th>Cantidad Aprobada</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for bien in bienes %}
+								<tr>
+									<td>
+										{% if bien.bien %}
+											{{ bien.bien }}
+										{% else %}
+											{{ bien.instrumento }}
+										{% endif %}
+									</td>
+									<td>{{ bien.cantidad_solicitada }}</td>
+									{% if object.status == 'E' %}
+										<td><input type="number" name="ctd{{ bien.id }}" placeholder="Ingrese la cantidad"></td>
+									{% else %}
+										<td>{{ bien.cantidad_aprobada }}</td>
+									{% endif %}
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% if object.status == 'E' %}
+					{{ form.status }}
+					<input type="submit" id="f-btn-submit" style="display: none;">
+					<div class="col s12 lan-btn-content">
+						<button class="lan-btn" id="solicitud-acep">Aceptar</button>
+					</div>
+				{% endif %}
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}
