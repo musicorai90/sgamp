@@ -5,6 +5,12 @@
 {% block content %}
 
 <style>
+	[type="radio"]:not(:checked), [type="radio"]:checked {
+		position: static;
+		left: 0;
+		visibility: visible;
+	}
+
 	.container {
 		display: block;
 		position: relative;

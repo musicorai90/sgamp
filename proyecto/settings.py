@@ -26,7 +26,7 @@ SECRET_KEY = '5ueuyc4q!dhhf#(tco+%7zv^*$&!y%535ps)do8mvzhpm=)wc0'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+#ALLOWED_HOSTS = ['sgamp.pythonanywhere.com']
 
 # Application definition
 
@@ -137,3 +137,5 @@ LOGIN_REDIRECT_URL = "/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = "/media/"
+
+#STATIC_ROOT = "/home/sgamp/sgamp/static"

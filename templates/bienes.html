@@ -22,7 +22,7 @@
                 <tr>
                     <td>{{ bien.id }}</td>
                     <td>{{ bien.nombre }}</td>
-                    <td>{{ bien.fecha }}</td>
+                    <td class="table-fecha">{{ bien.fecha }}</td>
                     <td>{{ bien.nucleo }}</td>
                     <td style="width: 150px;">
                         <a href="{% url 'principal:bien' bien.id %}" class="lan-btn black"><i class="fa fa-eye"></i></a>

@@ -15,16 +15,16 @@
 		<nav class="lan-header-nav">
 			<ul>
 				<li><a href="{% url 'principal:index' %}"><i class="fa fa-home"></i></a></li>
-				<li><a href="#galeria">Galería</a></li>
-				<li><a href="#nosotros">Nosotros</a></li>
-				<li><a href="#contacto">Contacto</a></li>
+				<li class="lan-header-nav-hidden"><a href="#galeria">Galería</a></li>
+				<li class="lan-header-nav-hidden"><a href="#nosotros">Nosotros</a></li>
+				<li class="lan-header-nav-hidden"><a href="#contacto">Contacto</a></li>
 			</ul>
 		</nav>
 		<a href="{% url 'principal:login' %}" class="lan-btn sticky" id="lan-btn-sticky">ENTRAR</a>
 	</header>
 	<main>
 		<div class="lan-main">
-			<img class="lan-main-img" src="{% static 'img/banner.jpg' %}" alt="orquesta guanare">
+			<img class="lan-main-img" id="lan-main-img" src="{% static 'img/banner.jpg' %}" alt="orquesta guanare">
 			<h1 class="lan-title">
 				<img src="{% static 'img/logo.png' %}" alt="orquesta logo">
 			</h1>
@@ -45,7 +45,15 @@
 				{% endfor %}
 			</div>
 		</section>
-		<section id="nosotros" class="lan-nosotros">
+		<section class="lan-nosotros-responsive">
+			<img class="lan-nosotros-responsive-img" src="{% static 'img/galeria/photo10.jpg' %}" alt="orquesta galeria 10">
+			<h2 class="lan-title" style="padding-top: 1rem;">Nosotros</h2>
+			<p>Fue fundado por iniciativa del doctor Francisco Betancourt en Agosto 1979, bajo la dirección artística de Henry Zambrano, dirección general de Raúl Díaz, la coordinación de Aida de Betancourt y en el apoyo docente de la orquesta de Lara. Es una institución de 36 años de exitosa trayectoria y en ella se han formado músicos de alto nivel que en la actualidad nos representan dignamente dentro y fuera del país. Atiende una población de 750 niños de todos los estratos sociales en canto coral e instrumento sinfónico o tradicional venezolanos. Han sido sus directores musicales Raúl Díaz, Henry Zambrano, René Álvarez, Marcos Pérez y en la actualidad la maestra Raquel Castillo.</p>
+			<div class="lan-btn-content">
+				<a href="{% url 'principal:nosotros' %}" class="lan-btn">VER MÁS</a>
+			</div>
+		</section>
+		<!--<section id="nosotros" class="lan-nosotros">
 			<div class="lan-nosotros-img">
 				<img src="{% static 'img/galeria/photo10.jpg' %}" alt="orquesta galeria 10">
 				<h2 class="lan-title">Nosotros</h2>
@@ -56,15 +64,15 @@
 					<a href="{% url 'principal:nosotros' %}" class="lan-btn">VER MÁS</a>
 				</div>
 			</div>
-		</section>
+		</section>-->
 		<section id="contacto" class="lan-contacto">
 			<h2 class="lan-title lan-title-galeria">CONTACTO</h2>
 			<form class="row">
-				<div class="input-field col s6">
+				<div class="input-field col s12 m6">
 					<input placeholder="Correo" type="email" id="lan-form-mail" class="validate" required>
 					<label for="lan-form-mail">Correo</label>
 				</div>
-				<div class="input-field col s6">
+				<div class="input-field col s12 m6">
 					<input placeholder="Asunto" type="text" id="lan-form-asunto" class="validate" required>
 					<label for="lan-form-asunto">Asunto</label>
 				</div>

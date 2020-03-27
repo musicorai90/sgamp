@@ -23,7 +23,7 @@
                     <td>{{ instrumento.id }}</td>
                     <td>{{ instrumento.nombre }}</td>
                     <td>{{ instrumento.nucleo }}</td>
-                    <td>{{ instrumento.fecha }}</td>
+                    <td class="table-fecha">{{ instrumento.fecha }}</td>
                     <td style="width: 150px;">
                         <a href="{% url 'principal:instrumento' instrumento.id %}" class="lan-btn black"><i class="fa fa-eye"></i></a>
                     </td>

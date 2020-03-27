@@ -10,15 +10,15 @@
 
 <div class="col s12">
 	<div class="row das-perfil">
-		<div class="col s4 mb-c8 bb">
+		<div class="col s12 l4 mb-c8 bb">
 			<span class="das-perfil-subtitle">Núcleo:</span>
 			<span>{{ object.nucleo }}</span>
 		</div>
-		<div class="col s4 mb-c8 bb">
+		<div class="col s12 l4 mb-c8 bb">
 			<span class="das-perfil-subtitle">Tipo:</span>
 			<span>{% if object.tipo == 'B' %} Bienes {% else %} Instrumentos {% endif %}</span>
 		</div>
-		<div class="col s4 mb-c8 bb">
+		<div class="col s12 l4 mb-c8 bb">
 			<span class="das-perfil-subtitle">Fecha:</span>
 			<span>{{ object.fecha }}</span>
 		</div>
@@ -32,7 +32,7 @@
 				<div class="col s12">
 					<span class="das-perfil-subtitle">{% if object.tipo == 'B' %}Bienes{% else %}Instrumentos{% endif %} solicitados:</span>
 					<table class="das-table" style="margin-top: 1rem;">
-						<thead>
+						<thead class="table-solicitud-head">
 							<tr>
 								<th>Nombre</th>
 								<th>Cantidad Solicitada</th>
@@ -51,7 +51,7 @@
 									</td>
 									<td>{{ bien.cantidad_solicitada }}</td>
 									{% if object.status == 'E' %}
-										<td><input type="number" name="ctd{{ bien.id }}" placeholder="Ingrese la cantidad"></td>
+										<td><input type="number" name="ctd{{ bien.id }}" placeholder="Cantidad"></td>
 									{% else %}
 										<td>{{ bien.cantidad_aprobada }}</td>
 									{% endif %}

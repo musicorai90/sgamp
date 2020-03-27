@@ -8,39 +8,41 @@
     <h1>Solicitudes</h1>
 </div>
 <div class="col s12">
-    <table class="das-table">
-        <thead>
-            <tr>
-                <th style="width: 50px;">#</th>
-                <th>Núcleo</th>
-                <th>Fecha</th>
-                <th colspan="2">Estatus</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for solicitud in solicitudes %}
+    <div class="das-responsive">
+        <table class="das-table">
+            <thead>
                 <tr>
-                    <td>{{ solicitud.id }}</td>
-                    <td>{{ solicitud.nucleo }}</td>
-                    <td>{{ solicitud.fecha }}</td>
-                    <td style="padding: .5rem; display: flex; justify-content: center;">
-                        {% if solicitud.status == 'L' %}
-                            <span class="f-status aprobada">Lista</span>
-                        {% else %}
-                            <span class="f-status espera">En espera</span>
-                        {% endif %}
-                    </td>
-                    <td style="width: 100px;">
-                        {% if solicitud.tipo == 'B' %}
-                            <a href="{% url 'principal:solicitudBien' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
-                        {% else %}
-                            <a href="{% url 'principal:solicitudInstrumento' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
-                        {% endif %}
-                    </td>
+                    <th style="width: 50px;">#</th>
+                    <th>Núcleo</th>
+                    <th>Fecha</th>
+                    <th colspan="2">Estatus</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for solicitud in solicitudes %}
+                    <tr>
+                        <td>{{ solicitud.id }}</td>
+                        <td>{{ solicitud.nucleo }}</td>
+                        <td class="table-fecha">{{ solicitud.fecha }}</td>
+                        <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                            {% if solicitud.status == 'L' %}
+                                <span class="f-status aprobada">Lista</span>
+                            {% else %}
+                                <span class="f-status espera">En espera</span>
+                            {% endif %}
+                        </td>
+                        <td style="width: 100px;">
+                            {% if solicitud.tipo == 'B' %}
+                                <a href="{% url 'principal:solicitudBien' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% else %}
+                                <a href="{% url 'principal:solicitudInstrumento' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     <div class="pagination f-pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
