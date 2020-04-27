@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<title>OSRJG</title>
+	<link rel="icon" href="{% static 'img/icono.jpg' %}">
 	<link rel="stylesheet" href="{% static 'lib/fontawesome/css/all.css' %}">
 	<link rel="stylesheet" href="{% static 'lib/materialize/css/materialize.min.css' %}">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -95,5 +96,12 @@
 
 	<script type="text/javascript" src="{% static 'lib/materialize/js/materialize.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+	<script type="text/javascript">
+		{% if messages %}
+		    {% for message in messages %}
+		    	M.toast({html: '{{ message }}'})
+		    {% endfor %}
+		{% endif %}
+	</script>
 </body>
 </html>

@@ -1,12 +1,32 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load auth_extras %}
 
 {% block content %}
 
 <div class="col s12 das-title">
     <h1>Solicitudes</h1>
 </div>
+<form method="post" id="buscador-form" class="col s12">
+    {% csrf_token %}
+    <div class="row buscador-form">
+        {% if request.user|has_group:'CN' %}
+        <div class="col s12 m6">
+            <a href="#" class="dropdown-trigger lan-btn" data-activates="dropdown1">Solicitar</a>
+            <ul id="dropdown1" class="dropdown-content">
+                <li><a href="{% url 'principal:agregarSolicitudBien' %}">Bienes</a></li>
+                <li><a href="{% url 'principal:agregarSolicitudInstrumento' %}">Instrumentos</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        <div class="input-field col s12 m6">
+            <input type="text" name="suId" onkeyup="buscar()" id="buscador" placeholder="Buscar por id">
+            <label for="cedula">Buscar</label>
+        </div>
+    </div>
+</form>
+
 <div class="col s12">
     <div class="das-responsive">
         <table class="das-table">
@@ -18,8 +38,8 @@
                     <th colspan="2">Estatus</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for solicitud in solicitudes %}
+            <tbody id="orq-tbody">
+                {% for solicitud in object_list %}
                     <tr>
                         <td>{{ solicitud.id }}</td>
                         <td>{{ solicitud.nucleo }}</td>
@@ -27,6 +47,8 @@
                         <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
                             {% if solicitud.status == 'L' %}
                                 <span class="f-status aprobada">Lista</span>
+                            {% elif solicitud.status == 'A' %}
+                                <span class="f-status otra">Aprobada</span>
                             {% else %}
                                 <span class="f-status espera">En espera</span>
                             {% endif %}
@@ -43,7 +65,7 @@
             </tbody>
         </table>
     </div>
-    <div class="pagination f-pagination">
+    <div class="pagination f-pagination" id="f-pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; Primero</a>
@@ -61,5 +83,125 @@
         </span>
     </div>
 </div>
+
+<script>
+    function buscar() {
+        var suId = document.getElementById('buscador').value;
+
+        if (suId) {
+            document.getElementById('f-pagination').style.display = "none";
+            var formulario = document.getElementById('buscador-form');
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","busqueda/");
+            xhr.send(new FormData(formulario));
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var solicitudes = JSON.parse(xhr.responseText);
+                    if (solicitudes.length == 0) {
+                        document.getElementById('orq-tbody').innerHTML = `
+                            <tr>
+                                <td style="text-align: center;" colspan="5">No hay solicitudes registradas</td>
+                            </tr>
+                        `;
+                    } else {
+                        document.getElementById('orq-tbody').innerHTML = "";
+                    }
+                    
+                    for (var i = solicitudes.length - 1; i >= 0; i--) {
+                        var newTr = document.createElement('TR');
+                        
+                        var strHTML = `
+                            <td>${solicitudes[i].id}</td>
+                            <td>${solicitudes[i].nucleo}</td>
+                            <td class="table-fecha">${solicitudes[i].fecha}</td>
+                        `;
+
+                        if (solicitudes[i].status == 'L') {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status aprobada">Lista</span>
+                                </td>
+                            `
+                        } else if {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status otra">Aprobada</span>
+                                </td>
+                            `
+                        } else {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status espera">En espera</span>
+                                </td>
+                            `
+                        }
+
+                        if (solicitudes[i].tipo == 'B') {
+                            strHTML += `
+                                <td style="width: 100px;">
+                                    <a href="{% url 'principal:solicitudBien' 
+                            `
+                            strHTML += solicitudes[i].id 
+
+                            strHTML += `
+                                 %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                </td>
+                            `
+                        } else {
+                            strHTML += `
+                                <td style="width: 100px;">
+                                    <a href="{% url 'principal:solicitudInstrumento' 
+                            `
+
+                            strHTML += solicitudes[i].id 
+
+                            strHTML += `
+                                 %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                </td>
+                            `
+                        }
+
+                        document.getElementById('orq-tbody').appendChild(newTr);
+                        newTr.innerHTML = strHTML;
+                    }
+                }
+            }
+        } else {
+            document.getElementById('orq-tbody').innerHTML = `
+                {% if object_list %}
+                    {% for solicitud in object_list %}
+                        <tr>
+                            <td>{{ solicitud.id }}</td>
+                            <td>{{ solicitud.nucleo }}</td>
+                            <td class="table-fecha">{{ solicitud.fecha }}</td>
+                            <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                {% if solicitud.status == 'L' %}
+                                    <span class="f-status aprobada">Lista</span>
+                                {% elif solicitudes.status == 'A' %}
+                                    <span class="f-status otra">Aprobada</span>
+                                {% else %}
+                                    <span class="f-status espera">En espera</span>
+                                {% endif %}
+                            </td>
+                            <td style="width: 100px;">
+                                {% if solicitud.tipo == 'B' %}
+                                    <a href="{% url 'principal:solicitudBien' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                {% else %}
+                                    <a href="{% url 'principal:solicitudInstrumento' solicitud.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td style="text-align: center;" colspan="5">No hay solicitudes registradas</td>
+                    </tr>
+                {% endif %}
+            `;
+            document.getElementById('f-pagination').style.display = "flex";
+        }
+    }
+</script>
 
 {% endblock %}

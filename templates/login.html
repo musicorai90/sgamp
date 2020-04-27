@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<title>OSRJG</title>
+	<link rel="icon" href="{% static 'img/icono.jpg' %}">
 	<link rel="stylesheet" href="{% static 'lib/fontawesome/css/all.css' %}">
 	<link rel="stylesheet" href="{% static 'lib/materialize/css/materialize.min.css' %}">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,13 +26,14 @@
 						<h2 class="log-title">INICIAR SESIÓN</h2>
 					</div>
 					<div class="col s12">
-						{% if messages %}
-							<ul class="messages">
-							{% for message in messages %}
-								<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						<div class="log-errors">{{ form.non_field_errors }}</div>
+						<!--<ul class="messages">
+							{% for field in form %}
+								{% for error in field.errors %}
+									<li>{{ error }}</li>
+								{% endfor %}
 							{% endfor %}
-							</ul>
-						{% endif %}
+						</ul>-->
 					</div>
 					<div class="input-field log-field col s12">
 						{{ form.username }}
@@ -40,6 +42,9 @@
 					<div class="input-field log-field col s12">
 						{{ form.password }}
 						<label for="log-form-password">Contraseña</label>
+					</div>
+					<div class="col s12">
+						<a href="{% url 'principal:recuperar' %}">Olvide mi contraseña</a>
 					</div>
 					<div class="log-btn-content col s12">
 						<input type="submit" class="log-btn" value="ENVIAR">

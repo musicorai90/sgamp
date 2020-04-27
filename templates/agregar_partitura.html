@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Agregar partitura</h1>
+</div>
+{% for field in form %}
+    {{ field.errors }}
+    {{ field.label_tag }}
+{% endfor %}
+<div class="col s12">
+    <<form class="row das-form" method="POST" enctype=multipart/form-data>
+        {% csrf_token %}
+        <div class="input-field col s12 m6" id="add-autor">
+            {{ form.autor }}
+            <label for="cedula">Autor</label>
+            <button type="button" onclick="$('#modal1').openModal()" class="lan-btn mb-c8"><i class="fa fa-plus"></i> Agregar autor</button>
+        </div>
+        <div class="input-field col s12 m6" id="add-voz">
+            {{ form.voz }}
+            <label for="cedula">Voz</label>
+            <button type="button" onclick="$('#modal2').openModal()" class="lan-btn mb-c8"><i class="fa fa-plus"></i> Agregar voz</button>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.nombre }}
+            <label for="cedula">Nombre</label>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.tonalidad }}
+            <label for="cedula">Tonalidad</label>
+        </div>
+        <div class="file-field input-field col s12 bb">
+            <button class="lan-btn btn" style="height: auto; line-height: 2rem;">
+                <span>Archivo</span>
+                {{ form.media }}
+            </button>
+            <div class="file-path-wrapper">
+                <input type="text" class="file-path validate">
+            </div>
+        </div>
+
+        <div class="col s12 lan-btn-content" style="margin-top: 1rem">
+            <input type="submit" id="f-btn-submit" style="display: none;">
+            <button type="button" class="lan-btn" id="part-acep">Guardar</button>
+        </div>
+    </form>
+
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4 class="das-title">Nuevo autor</h4>
+            <form method="post" action="/autores/agregar/" class="col s12 mb-c8 bb">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" name="autor-nombre" placeholder="Nombre" required>
+                        <label for="textarea1">Nombre</label>
+                    </div>
+                    <div class="col s12 lan-btn-content">
+                        <input type="submit" class="lan-btn" value="Aceptar">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <h4 class="das-title">Nueva voz</h4>
+            <form method="post" action="/voces/agregar/" class="col s12 mb-c8 bb">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="text" name="voz-nombre" placeholder="Voz" required>
+                        <label for="textarea1">Voz</label>
+                    </div>
+                    <div class="col s12 lan-btn-content">
+                        <input type="submit" class="lan-btn" value="Aceptar">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('#id_autor').material_select();
+        $('#id_voz').material_select();
+        $('#id_tonalidad').material_select();
+    });
+</script>
+
+{% endblock %}

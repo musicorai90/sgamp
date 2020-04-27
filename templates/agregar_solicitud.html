@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<style>
+	.dropdown-content {
+		width: 100% !important;
+	}
+
+	.dropdown-content li>span {
+		color: #000 !important;
+	}
+</style>
+
+<div class="col s12 das-title">
+    <h1>Agregar solicitud</h1>
+</div>
+
+<div class="col s12">
+	{% for field in form %}
+	    <div class="fieldWrapper">
+	        {{ field.errors }}
+	    </div>
+	{% endfor %}
+</div>
+
+<div class="col s12">
+    <form class="row das-form" method="POST">
+		{% csrf_token %}
+		<div class="input-field col s12" style="display: none;">
+            {{ form.nucleo }}
+        </div>
+    	<div class="input-field col s12">
+            {{ form.mensaje }}
+            <label for="cedula">Mensaje</label>
+        </div>
+        <div class="row">
+        	<div class="col s12">
+        		<span class="das-perfil-subtitle" style="display: block; text-align: center; margin-bottom: 1rem;">Bienes:</span>
+        	</div>
+        	<div class="col s12" id="bienes">
+        		<div class="row">
+			        <div class="input-field col s12 m6 add-bien">
+						<select id="bien1" name="bien1" class="validate" required>
+							<option value="" disabled selected>Selecciona un bien</option>
+							{% for bien in bienes %}
+								<option value="{{ bien.id }}">{{ bien.nombre }}</option>
+							{% endfor %}
+						</select>
+						<label>Bien</label>
+			        	<button type="button" class="btn-floating waves-effect waves-light bg-primary-orq" style="margin-bottom: 15px;" onclick="changeToInput(this.parentNode,'1')"><i class="fa fa-plus"></i></button>
+					</div>
+			        <div class="input-field col s12 m6">
+			            <input placeholder="Cantidad" type="number" id="cantidad1" name="cantidad1" class="validate" required>
+			            <label for="cedula">Cantidad</label>
+			        </div>
+        		</div>
+        		<div class="row">
+        			<div class="col s12">
+        				<button type="button" onclick="addCol()" class="btn waves-effect waves-light bg-primary-orq add-col"><i class="fa fa-plus right"></i>Agregar fila</button>
+        			</div>
+        		</div>
+        	</div>
+        </div>
+		<div class="col s12 lan-btn-content">
+			<input type="submit" value="Solicitar" class="lan-btn">
+		</div>
+    </form>
+</div>
+
+<script>
+	$(document).ready(function(){
+		$('select').material_select();
+	});
+
+	function addCol() {
+	    var bienes = document.getElementById('bienes');
+	    var cantidad = bienes.children.length;
+	    var newCol = document.createElement('DIV');
+	    newCol.classList.add("row");
+	    newCol.innerHTML = `
+	        <div class="input-field col s12 m6 add-bien">
+	            <select id="bien${cantidad}" name="bien${cantidad}" class="validate" required>
+	                <option value="" disabled selected>Selecciona un bien</option>
+	                {% for bien in bienes %}
+	                    <option value="{{ bien.id }}">{{ bien.nombre }}</option>
+	                {% endfor %}
+	            </select>
+	            <label>Bien</label>
+	            <button type="button" class="btn-floating waves-effect waves-light bg-primary-orq" style="margin-bottom: 15px;" onclick="changeToInput(this.parentNode,'${cantidad}')"><i class="fa fa-plus"></i></button>
+	        </div>
+	        <div class="input-field col s12 m6">
+	            <input placeholder="Cantidad" type="number" id="cantidad${cantidad}" name="cantidad${cantidad}" class="validate" required>
+	            <label for="cedula">Cantidad</label>
+	        </div>
+	    `;
+	    bienes.insertBefore(newCol,bienes.lastElementChild);
+	    $('select').material_select();
+	}
+
+	document.getElementById('id_nucleo_{{ nucleo }}').click();
+</script>
+
+{% endblock %}

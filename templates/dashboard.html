@@ -1,20 +1,102 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load auth_extras %}
 
 {% block content %}
 
 <div class="col s12 das-title">
     <h1>Bienvenido</h1>
 </div>
-{% if tipo == 'CR' or tipo == 'PR' or tipo == 'ES'  %}
+{% if request.user|has_group:'CR' or request.user|has_group:'PR' or request.user|has_group:'ES'  %}
+<form method="post" id="buscador-form" class="col s12">
+    {% csrf_token %}
+    <div class="row buscador-form">
+        {% if request.user|has_group:'CR' or request.user|has_group:'PR' %}
+        <div class="col s12 m6">
+            <a href="{% url 'principal:agregarPartitura' %}" class="lan-btn"><i class="fa fa-plus" style="margin-right: .5rem"></i> Agregar</a>
+        </div>
+        {% endif %}
+        <div class="input-field col s12 m6">
+            <input type="text" name="suId" onkeyup="buscar()" id="buscador" placeholder="Buscar por id">
+            <label for="cedula">Buscar</label>
+        </div>
+    </div>
+</form>
 <div class="col s12">
-    <ul class="biblioteca-box">
-        <li class="partitura"><a href="#"><span>Sistema de escalas de Carl Flesh</span><span>Subida por Raimon Guanay</span></a></li>
-        <li class="partitura"><a href="#"><span>Kreutzer - Galamian Edition</span><span>Subida por Raimon Guanay</span></a></li>
-        <li class="partitura"><a href="#"><span>Dont - Galamian Edition</span><span>Subida por Raimon Guanay</span></a></li>
+    <ul class="biblioteca-box" id="orq-tbody">
+        {% for partitura in partituras %}
+            <li class="partitura"><a href="{{ partitura.media.url }}"><span>{{ partitura }}</span><span>Subida por {{ partitura.usuario }}</span></a></li>
+        {% endfor %}
     </ul>
+    <div class="pagination f-pagination" id="f-pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primero</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
+
+<script>
+    function buscar() {
+        var suId = document.getElementById('buscador').value;
+
+        if (suId) {
+            document.getElementById('f-pagination').style.display = "none";
+            var formulario = document.getElementById('buscador-form');
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","/busqueda/");
+            xhr.send(new FormData(formulario));
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var datos = JSON.parse(xhr.responseText);
+                    if (datos.length == 0) {
+                        document.getElementById('orq-tbody').innerHTML = `
+                            <li class="partitura" style="text-align: center">No hay partituras registradas</li>
+                        `;
+                    } else {
+                        document.getElementById('orq-tbody').innerHTML = "";
+                    }
+                    
+                    for (var i = datos.length - 1; i >= 0; i--) {
+                        var newTr = document.createElement('LI');
+                        
+                        var strHTML = `
+                            <a href="${datos[i].url}"><span>${datos[i].nombre}</span><span>Subida por ${datos[i].usuario}</span></a>
+                        `
+
+                        document.getElementById('orq-tbody').appendChild(newTr);
+                        newTr.innerHTML = strHTML;
+                        newTR.classList.add('partitura');
+                    }
+                }
+            }
+        } else {
+            document.getElementById('orq-tbody').innerHTML = `
+                {% if page_obj %}
+                    {% for partitura in partituras %}
+                        <li class="partitura"><a href="{{ partitura.media.url }}"><span>{{ partitura }}</span><span>Subida por {{ partitura.usuario }}</span></a></li>
+                    {% endfor %}
+                {% else %}
+                    <li class="partitura" style="text-align: center">No hay partituras registradas</li>
+                {% endif %}
+            `;
+            document.getElementById('f-pagination').style.display = "flex";
+        }
+    }
+</script>
 {% else %}
 <article class="col s12">
     <div class="full-width center-align">
@@ -61,29 +143,4 @@
     </div>   
 </article>
 {% endif %}
-
-<!--<div class="col s12 das-title">
-    <h1>Bienes</h1>
-</div>
-<div class="col s12">
-    <table class="das-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Núcleo</th>
-                <th>Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Bien</td>
-                <td>Núcleo</td>
-                <td>DD-MM-AA</td>
-            </tr>
-        </tbody>
-    </table>
-</div>-->
-
 {% endblock %}

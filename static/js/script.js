@@ -1,4 +1,4 @@
-window.onscroll = function() {headerSticky()}
+wwindow.onscroll = function() {headerSticky()}
 
 function headerSticky() {
 	if (window.pageYOffset > 0) {

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load auth_extras %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Detalles de la Desincorporación</h1>
+</div>
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s12 l4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Núcleo:</span>
+			<span>{{ object.nombre.nucleo }}</span>
+		</div>
+		<div class="col s12 l4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Tipo:</span>
+			<span>{% if object.tipo == 'B' %} Bienes {% else %} Instrumentos {% endif %}</span>
+		</div>
+		<div class="col s12 l4 mb-c8 bb">
+			<span class="das-perfil-subtitle">Fecha:</span>
+			<span>{{ object.fecha }}</span>
+		</div>
+		<div class="col s12 mb-c8 bb">
+			<span class="das-perfil-subtitle">Mensaje:</span>
+			<p>{{ object.mensaje }}</p>
+		</div>
+		<form method="post" class="col s12 mb-c8 bb">
+			{% csrf_token %}
+			<div class="row">
+				{% if object.status == 'E' and request.user|has_group:'GE' %}
+					{{ form.status }}
+					<input type="submit" id="f-btn-submit" style="display: none;">
+					<div class="col s12 lan-btn-content">
+						<button class="lan-btn" id="desincorporacion-acep">Aceptar</button>
+						<button class="lan-btn" id="desincorporacion-rech">Rechazar</button>
+					</div>
+				{% endif %}
+			</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

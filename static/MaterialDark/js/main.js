@@ -53,7 +53,141 @@ $(document).ready(function(){
             closeOnConfirm: false,
             cancelButtonText: "No"
         }, function(){
+            document.getElementById('id_status').selectedIndex = '2';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#solicitud-actu').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
             document.getElementById('id_status').selectedIndex = '0';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#bien-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('id_nucleo').selectedIndex = '1';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#desincorporacion-rech').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('id_status').selectedIndex = '2';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#desincorporacion-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('id_status').selectedIndex = '0';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#pro-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('id_tipo').selectedIndex = '2';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#alu-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('id_tipo').selectedIndex = '1';
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#asig-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#part-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
             document.getElementById('f-btn-submit').click(); 
         });
     });
@@ -116,5 +250,15 @@ function verVisibles() {
         newInputs[i].addEventListener('click',function() {
             //console.log('Hola');
         });
+    }
+}
+
+function changeToInput(padre,num) {
+    for (var i = padre.children.length - 1; i >= 0; i--) {
+        padre.removeChild(padre.children[i]);
+        padre.innerHTML = `
+            <input placeholder="Nombre" type="text" id="bien-nuevo-${num}" name="bien-nuevo-${num}" class="validate" autofocus required>
+            <label>Nuevo bien</label>
+        `
     }
 }

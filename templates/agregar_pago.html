@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Agregar pago</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form" method="POST" enctype=multipart/form-data>
+        {% csrf_token %}
+        <div class="input-field col s12 m6">
+            {{ form.asignacion }}
+            <label for="cedula">Asignación</label>
+        </div>
+        <div class="input-field col s12 m6" id="add-bien">
+            {{ form.fecha}}
+            <label for="nombre" class="active">Fecha</label>
+        </div>
+        <div class="file-field input-field col s12">
+            <button class="lan-btn btn" style="height: auto; line-height: 2rem;">
+                <span>Imagen</span>
+                {{ form.imagen }}
+            </button>
+            <div class="file-path-wrapper">
+                <input type="text" class="file-path validate">
+            </div>
+        </div>
+        <div class="col s12 lan-btn-content">
+            <input type="submit" id="f-btn-submit" style="display: none;">
+            <button type="button" class="lan-btn" id="asig-acep">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $('select').material_select();
+</script>
+
+{% endblock %}

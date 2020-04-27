@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Agregar bien</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form" method="POST">
+        {% csrf_token %}
+        <div class="input-field col s12 m6">
+            {{ form.musico }}
+            <label for="cedula">Músico</label>
+        </div>
+        <div class="input-field col s12 m6" id="add-bien">
+            {{ form.instrumento}}
+            <label for="nombre">Instrumento</label>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.fecha_ini }}
+            <label for="apellido" class="active">Fecha</label>
+        </div>
+        <div class="col s12 lan-btn-content">
+            <input type="submit" id="f-btn-submit" style="display: none;">
+            <button type="button" class="lan-btn" id="asig-acep">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $('select').material_select();
+</script>
+
+{% endblock %}

@@ -25,7 +25,7 @@ SECRET_KEY = '5ueuyc4q!dhhf#(tco+%7zv^*$&!y%535ps)do8mvzhpm=)wc0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.110','127.0.0.1']
 #ALLOWED_HOSTS = ['sgamp.pythonanywhere.com']
 
 # Application definition
@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',
     'apps.principal',
+    'el_pagination',
+    'extra_views',
+    'betterforms',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'proyecto.urls'
@@ -139,3 +144,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = "/media/"
 
 #STATIC_ROOT = "/home/sgamp/sgamp/static"
+
+#Django-Axes
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_FAILURE_LIMIT = 3
+AXES_LOCKOUT_URL = '/recuperar'
+AXES_RESET_ON_SUCCESS = True
+
+#Correo
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'usuario@gmail.com'
+EMAIL_HOST_PASSWORD = 'password'
+EMAIL_PORT = 587

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load auth_extras %}
 
 {% block content %}
 
@@ -37,6 +38,30 @@
 		<div class="col s12 mb-c8 bb">
 			<span class="das-perfil-subtitle">Características:</span>
 			<p>{{ object.caracteristicas }}</p>
+		</div>
+		{% if request.user|has_group:'CN' and object.status == "DI" %}
+			<div class="col s12 lan-btn-content">
+				<button class="lan-btn" onclick="$('#modal1').openModal();">Desincorporar</button>
+			</div>
+		{% endif %}
+
+		<div id="modal1" class="modal">
+			<div class="modal-content">
+				<h4 class="das-title">Desincorporación</h4>
+				<form method="post" action="desincorporar/" class="col s12 mb-c8 bb">
+					{% csrf_token %}
+					<div class="row">
+						<input type="text" name="id" value="{{ object.id }}" style="display: none;">
+						<div class="input-field col s12">
+							<textarea id="textarea1" placeholder="Mensaje" name="mensaje" class="materialize-textarea"></textarea>
+							<label for="textarea1">Mensaje</label>
+						</div>
+						<div class="col s12 lan-btn-content">
+							<input type="submit" class="lan-btn" value="Aceptar">
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

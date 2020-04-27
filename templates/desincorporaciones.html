@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Desincorporación de bienes</h1>
+</div>
+<form method="post" id="buscador-form" class="col s12">
+    {% csrf_token %}
+    <div class="input-field col s12 m6 offset-m6">
+        <input type="text" name="suId" onkeyup="buscar()" id="buscador" placeholder="Buscar por cedula">
+        <label for="cedula">Buscar</label>
+    </div>
+    <input type="text" name="view" value="desincorporaciones" style="display: none;">
+</form>
+<div class="col s12">
+    <div class="das-responsive">
+        <table class="das-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Núcleo</th>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Status</th>
+                    <th style="width: 150px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bien in object_list %}
+                    <tr>
+                        <td>{{ bien.id }}</td>
+                        <td>{{ bien.nombre.nucleo }}</td>
+                        <td>{{ bien.nombre }}</td>
+                        <td class="table-fecha">{{ bien.fecha }}</td>
+                        <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                            {% if bien.status == 'A' %}
+                                <span class="f-status aprobada">Lista</span>
+                            {% elif bien.status == 'R' %}
+                                <span class="f-status rechazada">Rechazada</span>
+                            {% else %}
+                                <span class="f-status espera">En espera</span>
+                            {% endif %}
+                        </td>
+                        <td style="width: 100px;">
+                            {% if bien.tipo == 'B' %}
+                                <a href="{% url 'principal:desincorporacionBien' bien.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% else %}
+                                <a href="{% url 'principal:desincorporacionInstrumento' bien.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination f-pagination" id="f-pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primero</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+
+<script>
+    function buscar() {
+        var suId = document.getElementById('buscador').value;
+
+        if (suId) {
+            document.getElementById('f-pagination').style.display = "none";
+            var formulario = document.getElementById('buscador-form');
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","/busqueda/");
+            xhr.send(new FormData(formulario));
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var datos = JSON.parse(xhr.responseText);
+                    if (datos.length == 0) {
+                        document.getElementById('orq-tbody').innerHTML = `
+                            <tr>
+                                <td style="text-align: center;" colspan="5">No hay desincorporaciones registradas</td>
+                            </tr>
+                        `;
+                    } else {
+                        document.getElementById('orq-tbody').innerHTML = "";
+                    }
+                    
+                    for (var i = datos.length - 1; i >= 0; i--) {
+                        var newTr = document.createElement('TR');
+                        
+                        var strHTML = `
+                            <td>${datos[i].id}</td>
+                            <td>${datos[i].nucleo}</td>
+                            <td>${datos[i].nombre}</td>
+                            <td>${datos[i].fecha}</td>
+                        `;
+
+                        if (datos[i].status == 'A') {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status aprobada">Aprobada</span>
+                                </td>
+                            `
+                        } else if (datos[i].status == 'R') {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status rechazada">Rechazada</span>
+                                </td>
+                            `
+                        } else {
+                            strHTML += `
+                                <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                                    <span class="f-status espera">En espera</span>
+                                </td>
+                            `
+                        }
+
+                        if (datos[i].tipo == 'B') {
+                            strHTML += `
+                                <td style="width: 100px;">
+                                    <a href="{% url 'principal:desincorporacionBien' 
+                            `
+                            strHTML += datos[i].id 
+
+                            strHTML += `
+                                 %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                </td>
+                            `
+                        } else {
+                            strHTML += `
+                                <td style="width: 100px;">
+                                    <a href="{% url 'principal:desincorporacionInstrumento' 
+                            `
+
+                            strHTML += datos[i].id 
+
+                            strHTML += `
+                                 %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                </td>
+                            `
+                        }
+                        document.getElementById('orq-tbody').appendChild(newTr);
+                        newTr.innerHTML = strHTML;
+                    }
+                }
+            }
+        } else {
+            document.getElementById('orq-tbody').innerHTML = `
+                {% if object_list %}
+                    {% for bien in object_list %}
+                        <td>{{ bien.id }}</td>
+                        <td>{{ bien.nombre.nucleo }}</td>
+                        <td>{{ bien.nombre }}</td>
+                        <td class="table-fecha">{{ bien.fecha }}</td>
+                        <td style="padding: .5rem; display: flex; justify-content: center; min-width: 150px;">
+                            {% if bien.status == 'A' %}
+                                <span class="f-status aprobada">Lista</span>
+                            {% elif bien.statud == 'R' %}
+                                <span class="f-status rechazada">Rechazada</span>
+                            {% else %}
+                                <span class="f-status espera">En espera</span>
+                            {% endif %}
+                        </td>
+                        <td style="width: 100px;">
+                            {% if bien.tipo == 'B' %}
+                                <a href="{% url 'principal:desincorporacionBien' bien.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% else %}
+                                <a href="{% url 'principal:desincorporacionInstrumento' bien.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td style="text-align: center;" colspan="5">No hay desincorporaciones registradas</td>
+                    </tr>
+                {% endif %}
+            `;
+            document.getElementById('f-pagination').style.display = "none";
+        }
+    }
+</script>
+
+{% endblock %}

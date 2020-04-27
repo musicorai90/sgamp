@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Agregar instrumento</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form" method="POST">
+        {% csrf_token %}
+        <div class="input-field col s12 m6">
+            {{ form.codigo }}
+            <label for="cedula">Código</label>
+        </div>
+        <div class="input-field col s12 m6" id="add-bien">
+            {{ form.nombre}}
+            <label for="nombre">Tipo de bien</label>
+            <button type="button" onclick="addInstrumento()" class="lan-btn"><i class="fa fa-plus"></i> Agregar tipo</button>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.marca }}
+            <label for="apellido">Marca</label>
+        </div>
+        <div class="input-field col s12">
+            {{ form.caracteristicas }}
+            <label for="direccion">Características</label>
+        </div>
+        <div class="col s12 lan-btn-content">
+            {{ form.nucleo }}
+            <input type="radio" name="nuevo" value="0" checked style="display: none;">
+            <input type="radio" name="nuevo" value="1" id="nuevo-input" style="display: none;">
+            <input type="submit" id="f-btn-submit" style="display: none;">
+            <button type="button" class="lan-btn" id="bien-acep">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $('#id_nombre').material_select();
+
+    function addInstrumento() {
+        var tipo = document.getElementById('add-bien');
+        for (var i = tipo.children.length - 1; i >= 0; i--) {
+            tipo.removeChild(tipo.children[i])
+        }
+        tipo.innerHTML = `
+            <input type="text" name="new-bien" placeholder="Tipo de instrumento" autofocus>
+            <label>Tipo de Instrumento</label>
+            {{ form.nombre }}
+        `;
+        document.getElementById('id_nombre').style.display = "none";
+        document.getElementById('id_nombre').required = false;
+        document.getElementById('nuevo-input').checked = true;
+        document.getElementById('id_nombre').selectedIndex = '1';
+    }
+</script>
+
+{% endblock %}

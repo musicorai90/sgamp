@@ -9,6 +9,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	<title>Sistema de gestión</title>
+
+    <link rel="icon" href="{% static 'img/icono.jpg' %}">
     
      <!-- Normalize CSS -->
 	<link rel="stylesheet" href="{% static 'MaterialDark/css/normalize.css' %}">
@@ -35,6 +37,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <script type="text/javascript" src="{% static 'MaterialDark/js/jquery-2.2.0.min.js' %}"></script>
+
+    <script src="{% static 'MaterialDark/js/materialize.min.js' %}"></script>
 
     <script type="text/javascript" src="{% static 'lib/nanogallery/dist/jquery.nanogallery2.js' %}"></script>
 </head>
@@ -71,16 +75,20 @@
                         <a href="{% url 'principal:index' %}" class="waves-effect waves-light"><i class="fa fa-home"></i> Inicio</a>
                     </li>
                     {% if request.user|has_group:'GE' or request.user|has_group:'CN' or request.user|has_group:'SE' %}
-                    {% if request.user|has_group:'GE' or request.user|has_group:'CN' %}
                     <li>
                         <a href="{% url 'principal:solicitudes' %}" class="waves-effect waves-light"><i class="fa fa-sticky-note"></i> Solicitudes</a>
                     </li>
-                    {% endif %}
                     <li>
                         <a href="{% url 'principal:bienes' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Bienes</a>
                     </li>
                     <li>
                         <a href="{% url 'principal:instrumentos' %}" class="waves-effect waves-light"><i class="fa fa-drum"></i> Instrumentos</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'principal:tipoBienes' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Tipos de Bienes</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'principal:tipoInstrumentos' %}" class="waves-effect waves-light"><i class="fa fa-drum"></i> Tipos de Instrumentos</a>
                     </li>
                     <li>
                         <a href="{% url 'principal:profesores' %}" class="waves-effect waves-light"><i class="fa fa-users"></i> Profesores</a>
@@ -91,19 +99,15 @@
                     <li>
                         <a href="{% url 'principal:asignaciones' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Asignaciones</a>
                     </li>
+                    {% if request.user|has_group:'GE' or request.user|has_group:'CN' %}
+                    <li>
+                        <a href="{% url 'principal:desincorporaciones' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Desincorporaciones</a>
+                    </li>
+                    {% endif %}
                     {% endif %}
                     {% if request.user|has_group:'GE' %}
                     <li>
                         <a href="{% url 'principal:galeria' %}" class="waves-effect waves-light"><i class="fa fa-image"></i> Galería</a>
-                    </li>
-                    {% elif request.user|has_group:'CN' %}
-                    <li>
-                        <a class="NavLateral-DropDown waves-effect waves-light"><i class="fa fa-couch"></i><i class="zmdi zmdi-chevron-down NavLateral-CaretDown"></i> Desincorporaciones</a>
-                        <ul class="full-width">
-                            <li><a href="{% url 'principal:bienesDes' %}" class="waves-effect waves-light">Bienes</a></li>
-                            <li class="NavLateralDivider"></li>
-                            <li><a href="{% url 'principal:instrumentosDes' %}" class="waves-effect waves-light">Insrumentos</a></li>
-                        </ul>
                     </li>
                     {% endif %}
                     {% if request.user|has_group:'CB' %}
@@ -112,6 +116,9 @@
                     </li>
                     <li>
                         <a href="{% url 'principal:asignaciones' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Asignaciones</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'principal:pagos' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Pagos de seguro</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -329,12 +336,17 @@
     <script src="{% static 'MaterialDark/js/sweetalert.min.js' %}"></script>
         
     <!-- Materialize JS -->
-	<script src="{% static 'MaterialDark/js/materialize.min.js' %}"></script>
     
     <!-- Malihu jQuery custom content scroller JS -->
 	<script src="{% static 'MaterialDark/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     
     <!-- MaterialDark JS -->
 	<script src="{% static 'MaterialDark/js/main.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.dropdown-trigger').dropdown();
+        });
+    </script>
 </body>
 </html>

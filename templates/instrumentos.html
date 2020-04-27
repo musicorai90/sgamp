@@ -1,36 +1,141 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load auth_extras %}
 
 {% block content %}
 
 <div class="col s12 das-title">
     <h1>Instrumentos</h1>
 </div>
+<form method="post" id="buscador-form" class="col s12">
+    {% csrf_token %}
+    <div class="row buscador-form">
+        {% if request.user|has_group:'SE' %}
+        <div class="col s12 m6">
+            <a href="{% url 'principal:agregarInstrumento' %}" class="lan-btn"><i class="fa fa-plus" style="margin-right: .5rem"></i> Agregar</a>
+        </div>
+        {% endif %}
+        <div class="input-field col s12 m6">
+            <input type="text" name="suId" onkeyup="buscar()" id="buscador" placeholder="Buscar por id">
+            <label for="cedula">Buscar</label>
+        </div>
+    </div>
+    <input type="text" name="view" value="instrumentos" style="display: none;">
+</form>
 <div class="col s12">
-    <table class="das-table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Núcleo</th>
-                <th colspan="2">Fecha</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for instrumento in object_list %}
+    <div class="das-responsive">
+        <table class="das-table">
+            <thead>
                 <tr>
-                    <td>{{ instrumento.id }}</td>
-                    <td>{{ instrumento.nombre }}</td>
-                    <td>{{ instrumento.nucleo }}</td>
-                    <td class="table-fecha">{{ instrumento.fecha }}</td>
-                    <td style="width: 150px;">
-                        <a href="{% url 'principal:instrumento' instrumento.id %}" class="lan-btn black"><i class="fa fa-eye"></i></a>
-                    </td>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Núcleo</th>
+                    <th colspan="2">Fecha</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody id="orq-tbody">
+                {% for instrumento in object_list %}
+                    <tr>
+                        <td>{{ instrumento.id }}</td>
+                        <td>{{ instrumento.nombre }}</td>
+                        <td>{{ instrumento.nucleo }}</td>
+                        <td class="table-fecha">{{ instrumento.fecha }}</td>
+                        <td style="width: 150px;">
+                            <a href="{% url 'principal:instrumento' instrumento.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination f-pagination" id="f-pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; Primero</a>
+                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span class="current">
+                {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">Último &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
+<script>
+    function buscar() {
+        var suId = document.getElementById('buscador').value;
+
+        if (suId) {
+            document.getElementById('f-pagination').style.display = "none";
+            var formulario = document.getElementById('buscador-form');
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST","/busqueda/");
+            xhr.send(new FormData(formulario));
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var datos = JSON.parse(xhr.responseText);
+                    if (datos.length == 0) {
+                        document.getElementById('orq-tbody').innerHTML = `
+                            <tr>
+                                <td style="text-align: center;" colspan="5">No hay instrumentos registrados</td>
+                            </tr>
+                        `;
+                    } else {
+                        document.getElementById('orq-tbody').innerHTML = "";
+                    }
+                    
+                    for (var i = datos.length - 1; i >= 0; i--) {
+                        var newTr = document.createElement('TR');
+                        
+                        var strHTML = `
+                            <td>${datos[i].id}</td>
+                            <td>${datos[i].nombre}</td>
+                            <td class="table-fecha">${datos[i].fecha}</td>
+                            <td>${datos[i].nucleo}</td>
+                            <td style="width: 150px;">
+                                <a href="{% url 'principal:instrumento
+                        `;
+                        strHTML += datos[i].id 
+                        strHTML += `
+                             %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                            </td>
+                        `
+
+                        document.getElementById('orq-tbody').appendChild(newTr);
+                        newTr.innerHTML = strHTML;
+                    }
+                }
+            }
+        } else {
+            document.getElementById('orq-tbody').innerHTML = `
+                {% if object_list %}
+                    {% for instrumento in object_list %}
+                        <tr>
+                            <td>{{ instrumento.id }}</td>
+                            <td>{{ instrumento.nombre }}</td>
+                            <td class="table-fecha">{{ instrumento.fecha }}</td>
+                            <td>{{ instrumento.nucleo }}</td>
+                            <td style="width: 150px;">
+                                <a href="{% url 'principal:instrumento' instrumento.id %}" class="lan-btn black"><i class="fa fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td style="text-align: center;" colspan="5">No hay instrumentos registrados</td>
+                    </tr>
+                {% endif %}
+            `;
+            document.getElementById('f-pagination').style.display = "flex";
+        }
+    }
+</script>
 
 {% endblock %}

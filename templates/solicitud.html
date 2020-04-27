@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load auth_extras %}
 
 {% block content %}
 
@@ -50,7 +51,7 @@
 										{% endif %}
 									</td>
 									<td>{{ bien.cantidad_solicitada }}</td>
-									{% if object.status == 'E' %}
+									{% if object.status == 'E' and request.user|has_group:'GE' %}
 										<td><input type="number" name="ctd{{ bien.id }}" placeholder="Cantidad"></td>
 									{% else %}
 										<td>{{ bien.cantidad_aprobada }}</td>
@@ -60,8 +61,9 @@
 						</tbody>
 					</table>
 				</div>
-				{% if object.status == 'E' %}
+				{% if object.status == 'E' and request.user|has_group:'GE' %}
 					{{ form.status }}
+					<input type="text" name="opcion" value="aprobar" style="display: none;">
 					<input type="submit" id="f-btn-submit" style="display: none;">
 					<div class="col s12 lan-btn-content">
 						<button class="lan-btn" id="solicitud-acep">Aceptar</button>
@@ -69,6 +71,31 @@
 				{% endif %}
 			</div>
 		</form>
+		{% if request.user|has_group:'SE' and object.status == 'A' %}
+			<form method="post" class="col s12 mb-c8 bb">
+				{% csrf_token %}
+				<div class="row">
+					{% for bien in bienes %}
+						<div class="col s12 m6 bien-box">
+							{% for b in bieall %}
+								{% if b.nombre_id == bien.bien_id %}
+									<p>
+										<input type="checkbox" id="bien{{ b.id }}" name="bienes" value="{{ b.id }}">
+										<label for="bien{{ b.id }}">{{ b.codigo }} {{ b.nombre }}</label>
+									</p>
+								{% endif %}
+							{% endfor %}
+						</div>
+					{% endfor %}
+				</div>
+				<div class="col s12 lan-btn-content">
+					{{ form.status }}
+					<input type="text" name="opcion" value="actualizar" style="display: none;">
+					<input type="submit" id="f-btn-submit" style="display: none;">
+					<button class="lan-btn" id="solicitud-actu">Aceptar</button>
+				</div>
+			</form>
+		{% endif %}
 	</div>
 </div>
 
