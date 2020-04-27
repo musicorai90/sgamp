@@ -560,9 +560,9 @@ class Recuperar(SuccessMessageMixin, generic.edit.FormView):
 			return super().form_invalid(form)
 
 	def dispatch(self, request, *args, **kwargs):
-        if str(request.user) is not "AnonymousUser":
-        	return redirect('principal:index')
-        return super(Recuperar, self).dispatch(request, *args, **kwargs)
+		if str(request.user) is not "AnonymousUser":
+			return redirect('principal:index')
+		return super(Recuperar, self).dispatch(request, *args, **kwargs)
 
 class RecuperarCodigo(generic.edit.FormView):
 	template_name = "recuperar_codigo.html"
@@ -582,8 +582,8 @@ class RecuperarCodigo(generic.edit.FormView):
 		return super().form_valid(form)
 
 	def dispatch(self, *args, **kwargs):
-        if str(self.request.user) is "AnonymousUser":
-        	return redirect('principal:index')
+		if str(self.request.user) is "AnonymousUser":
+			return redirect('principal:index')
 		try:
 			a = models.RecuperarPassword.objects.get(codigo=self.kwargs['codigo'])
 			return super().dispatch(*args, **kwargs)
