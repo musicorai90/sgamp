@@ -12,7 +12,7 @@ from . import models
 import random
 
 class LoginForm(AuthenticationForm):
-	username = forms.CharField(widget=forms.TextInput(attrs={'type': 'text','placeholder': 'Usuario','id': 'log-form-user','class': 'validate','autofocus': 'true'}))
+	username = forms.CharField(widget=forms.TextInput(attrs={'type': 'number','placeholder': 'Usuario','id': 'log-form-user','class': 'validate','autofocus': 'true','max': '99999999','autocomplete': 'off','onkeypress': "len8(event,'log-form-user')",'onpaste': 'event.preventDefault()','ondragover': 'event.preventDefault()'}))
 	password = forms.CharField(widget=forms.TextInput(attrs={'type': 'password','placeholder': 'Contraseña','id': 'log-form-password','class': 'validate'}))
 
 class SolicitudBienForm(forms.ModelForm):
@@ -98,6 +98,28 @@ class AgregarMusicoForm(forms.ModelForm):
 			'nucleo': forms.Select(),
 		}
 
+class ModificarPerfilForm(forms.ModelForm):
+	class Meta:
+		model = models.Perfil
+		fields = ['nombre','apellido','telefono','direccion']
+		widgets = {
+			'nombre': forms.TextInput(attrs={'placeholder': 'Nombre'}),
+			'apellido': forms.TextInput(attrs={'placeholder': 'Apellido'}),
+			'telefono': forms.NumberInput(attrs={'placeholder': 'Telefono'}),
+			'direccion': forms.Textarea(attrs={'placeholder': 'Direccion','class': 'materialize-textarea'}),
+		}
+
+class SecretariaForm(forms.ModelForm):
+	class Meta:
+		model = models.Perfil
+		fields = ['nombre','apellido','telefono','direccion']
+		widgets = {
+			'nombre': forms.TextInput(attrs={'placeholder': 'Nombre'}),
+			'apellido': forms.TextInput(attrs={'placeholder': 'Apellido'}),
+			'telefono': forms.NumberInput(attrs={'placeholder': 'Telefono'}),
+			'direccion': forms.Textarea(attrs={'placeholder': 'Direccion','class': 'materialize-textarea'}),
+		}
+
 class AgregarAsignacionForm(forms.ModelForm):
 	class Meta:
 		model = models.Asignacion
@@ -149,10 +171,16 @@ class GaleriaForm(forms.ModelForm):
 
 class RecuperarForm(forms.Form):
 	username = forms.CharField(widget=forms.TextInput(attrs={
-		'type': 'text',
+		'type': 'number',
 		'placeholder': 'Usuario',
 		'id': 'log-form-user',
 		'class': 'validate',
+		'autofocus': 'true',
+		'max': '99999999',
+		'autocomplete': 'off',
+		'onkeypress': "len8(event,'log-form-user')",
+		'onpaste': 'event.preventDefault()',
+		'ondragover': 'event.preventDefault()'
 	}))
 
 	def send_mail(self,correo):
@@ -202,3 +230,8 @@ class RecuperarCodigoForm(forms.Form):
 		logReset(username=username)
 		registro = models.RecuperarPassword.objects.get(codigo=codigo)
 		registro.delete()
+
+class CambiarPassForm(forms.Form):
+	password = forms.CharField(widget=forms.TextInput(attrs={'type': 'password','placeholder': 'Contraseña actual','id': 'log-form-password','class': 'validate'}))
+	password2 = forms.CharField(widget=forms.TextInput(attrs={'type': 'password','placeholder': 'Nueva contraseña','id': 'log-form-password-2','class': 'validate'}))
+	password3 = forms.CharField(widget=forms.TextInput(attrs={'type': 'password','placeholder': 'Ingrese nuevamente','id': 'log-form-password-3','class': 'validate'}))		

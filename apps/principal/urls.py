@@ -5,10 +5,12 @@ from . import views
 app_name = "principal"
 urlpatterns = [
 	path('',views.Index.as_view(),name="index"),
+	path('mensaje/',views.Mensaje.as_view(),name="mensaje"),
 	path('login/',views.Login.as_view(),name="login"),
 	path('logout/',views.Logout.as_view(),name="logout"),
 	path('nosotros/',views.Nosotros.as_view(),name="nosotros"),
 	path('perfil/',views.Perfil.as_view(),name="perfil"),
+	path('cambiar/',views.CambiarPass.as_view(),name="cambiarPass"),
 	path('perfil/modificar',views.ModificarPerfil.as_view(),name="modificarPerfil"),
 	path('bienes/agregar/',views.AgregarBien.as_view(),name="agregarBien"),
 	path('solicitudes/',views.Solicitudes.as_view(),name="solicitudes"),
@@ -48,4 +50,10 @@ urlpatterns = [
 	path('partituras/agregar/',views.AgregarPartitura.as_view(),name="agregarPartitura"),
 	path('autores/agregar/',views.AgregarAutor.as_view(),name="agregarAutor"),
 	path('voces/agregar/',views.AgregarVoz.as_view(),name="agregarVoz"),
+	path('nucleos/',views.Nucleo.as_view(),name="nucleos"),
+	path('catedras/',views.Catedra.as_view(),name="catedras"),
+	path('secretaria/',views.Secretaria.as_view(),name="secretaria"),
+	path('secretaria/agregar/',views.AgregarSecretaria.as_view(),name="agregarSecretaria"),
+	path('coordinador/<int:pk>/',views.Coordinador.as_view(),name="coordinador"),
+	path('coordinador/agregar/',views.AgregarCoordinador.as_view(),name="agregarCoordinador"),
 ]

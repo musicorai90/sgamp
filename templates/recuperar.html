@@ -27,13 +27,6 @@
 					</div>
 					<div class="col s12">
 						<div class="log-errors">{{ form.non_field_errors }}</div>
-						<!--<ul class="messages">
-							{% for field in form %}
-								{% for error in field.errors %}
-									<li>{{ error }}</li>
-								{% endfor %}
-							{% endfor %}
-						</ul>-->
 					</div>
 					<div class="input-field log-field col s12">
 						{{ form.username }}
@@ -46,5 +39,7 @@
 			</div>
 		</div>
 	</main>
+
+	<script type="text/javascript" src="{% static 'js/validaciones.js' %}"></script>
 </body>
 </html>

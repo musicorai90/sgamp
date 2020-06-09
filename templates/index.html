@@ -68,17 +68,18 @@
 		</section>-->
 		<section id="contacto" class="lan-contacto">
 			<h2 class="lan-title lan-title-galeria">CONTACTO</h2>
-			<form class="row">
+			<form class="row" method="post" action="/mensaje/">
+				{% csrf_token %}
 				<div class="input-field col s12 m6">
-					<input placeholder="Correo" type="email" id="lan-form-mail" class="validate" required>
+					<input placeholder="Correo" type="email" id="lan-form-mail" name="mensaje-correo" class="validate" required>
 					<label for="lan-form-mail">Correo</label>
 				</div>
 				<div class="input-field col s12 m6">
-					<input placeholder="Asunto" type="text" id="lan-form-asunto" class="validate" required>
+					<input placeholder="Asunto" type="text" id="lan-form-asunto" name="mensaje-asunto" class="validate" required>
 					<label for="lan-form-asunto">Asunto</label>
 				</div>
 				<div class="input-field col s12" style="margin-top: 3rem">
-					<textarea id="lan-form-asunto" placeholder="Mensaje" class="materialize-textarea"></textarea>
+					<textarea id="lan-form-asunto" placeholder="Mensaje" name="mensaje-mensaje" class="materialize-textarea"></textarea>
 					<label for="lan-form-asunto">Mensaje</label>
 				</div>
 				<div class="lan-btn-content col s12">

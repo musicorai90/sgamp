@@ -51,3 +51,12 @@ def get_nucleo(self):
 def get_group(self):
     grupo = self.request.user.groups.get()
     return str(grupo)
+
+def get_user_manual(self):
+    num = self.request.user.id
+    if get_group(self) == 'GE' or get_group(self) == 'SE' or get_group(self) == 'CB' or get_group(self) == 'CR':
+        return models.Perfil.objects.get(usuario_id=num)
+    elif get_group(self) == 'CN':
+        return models.Coordinador.objects.get(usuario_id=num)
+    elif get_group(self) == 'PR' or get_group(self) == 'ES':
+        return models.Musico.objects.get(cedula=self.request.user.username)

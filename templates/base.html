@@ -66,8 +66,8 @@
                 <i class="zmdi zmdi-close NavLateral-title-btn ShowHideMenu"></i>
             </header>
             <figure class="full-width NavLateral-logo">
-                <img src="{% static 'MaterialDark/assets/img/profile.png' %}" alt="material-logo" class="responsive-img center-box">
-                <figcaption class="center-align">Nombre Apellido</figcaption>
+                <img src="{% usuarioFoto request.user %}" alt="material-logo" class="responsive-img center-box">
+                <figcaption class="center-align">{% usuarioNombre request.user %}</figcaption>
             </figure> 
             <div class="NavLateral-Nav">
                 <ul class="full-width">
@@ -84,12 +84,14 @@
                     <li>
                         <a href="{% url 'principal:instrumentos' %}" class="waves-effect waves-light"><i class="fa fa-drum"></i> Instrumentos</a>
                     </li>
+                    {% if request.user|has_group:'SE' %}
                     <li>
                         <a href="{% url 'principal:tipoBienes' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Tipos de Bienes</a>
                     </li>
                     <li>
                         <a href="{% url 'principal:tipoInstrumentos' %}" class="waves-effect waves-light"><i class="fa fa-drum"></i> Tipos de Instrumentos</a>
                     </li>
+                    {% endif %}
                     <li>
                         <a href="{% url 'principal:profesores' %}" class="waves-effect waves-light"><i class="fa fa-users"></i> Profesores</a>
                     </li>
@@ -104,10 +106,21 @@
                         <a href="{% url 'principal:desincorporaciones' %}" class="waves-effect waves-light"><i class="fa fa-couch"></i> Desincorporaciones</a>
                     </li>
                     {% endif %}
+                    {% if request.user|has_group:'GE' or request.user|has_group:'SE' %}
+                    <li>
+                        <a href="{% url 'principal:nucleos' %}" class="waves-effect waves-light"><i class="fa fa-building"></i> Núcleos</a>
+                    </li>
+                    {% endif %}
                     {% endif %}
                     {% if request.user|has_group:'GE' %}
                     <li>
                         <a href="{% url 'principal:galeria' %}" class="waves-effect waves-light"><i class="fa fa-image"></i> Galería</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'principal:secretaria' %}" class="waves-effect waves-light"><i class="fa fa-user"></i> Secretaria</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'principal:catedras' %}" class="waves-effect waves-light"><i class="fa fa-drum"></i> Cátedras</a>
                     </li>
                     {% endif %}
                     {% if request.user|has_group:'CB' %}
@@ -136,12 +149,12 @@
                 <li><a href="#" class="tooltipped waves-effect waves-light btn-ExitSystem" data-position="bottom" data-delay="50" data-tooltip="Cerrar sesión"><i class="fa fa-sign-out-alt"></i></a></li>
                 <!--<li><a href="#" class="tooltipped waves-effect waves-light btn-Search" data-position="bottom" data-delay="50" data-tooltip="Search"><i class="zmdi zmdi-search"></i></a></li>-->
                 <li><a href="{% url 'principal:perfil' %}" class="tooltipped waves-effect waves-light" data-position="bottom" data-delay="50" data-tooltip="Mi perfil"><i class="fa fa-user"></i></a></li>
-                <li>
+                <!--<li>
                     <a href="#" class="tooltipped waves-effect waves-light btn-Notification" data-position="bottom" data-delay="50" data-tooltip="Notificaciones">
                         <i class="zmdi zmdi-notifications"></i>
                         <span class="ContentPage-Nav-indicator bg-danger">2</span>
                     </a>
-                </li>
+                </li>-->
             </ul>   
         </div>
 

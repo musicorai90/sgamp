@@ -34,6 +34,7 @@ class Musico(models.Model):
 	tipo = models.CharField(max_length=1,choices=TIPOS)
 	catedra = models.ForeignKey(Catedra, on_delete="cascade")
 	nucleo = models.ForeignKey(Nucleo, on_delete="cascade")
+	foto = models.ImageField(upload_to="perfiles/", default="perfiles/profile.png")
 
 	def tipo_text(self):
 		return dict(Musico.TIPOS)[self.tipo]
@@ -143,6 +144,9 @@ class Instrumento(models.Model):
 	def tipo_text(self):
 		return dict(Bien.OPCIONES)[self.status]
 
+	def get_absolute_url(self):
+		return reverse('principal:instrumentos')
+
 	def __str__(self):
 		cadena = "{0} - {1}"
 		return cadena.format(self.nombre, self.marca)
@@ -220,6 +224,7 @@ class Coordinador(models.Model):
 	telefono = models.BigIntegerField()
 	direccion = models.TextField()
 	email = models.CharField(max_length=50)
+	foto = models.ImageField(upload_to="perfiles/", default="perfiles/profile.png")
 
 	def __str__(self):
 		cadena = "{0} {1}"
@@ -305,3 +310,14 @@ class PartituraMusico(models.Model):
 	def __str__(self):
 		cadena = "{0} {1}"
 		return cadena.format(self.partitura,self.musico)
+
+class Perfil(models.Model):
+	usuario = models.ForeignKey(User, on_delete="cascade")
+	nombre = models.CharField(max_length=50,blank=True,null=True)
+	apellido = models.CharField(max_length=50,blank=True,null=True)
+	telefono = models.BigIntegerField(blank=True,null=True)
+	direccion = models.TextField(blank=True,null=True)
+	foto = models.ImageField(upload_to="perfiles/", default="perfiles/profile.png")
+
+	def __str__(self):
+		return self.usuario.__str__()

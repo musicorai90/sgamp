@@ -11,6 +11,11 @@
 
 <div class="col s12">
 	<div class="row das-perfil">
+		<div class="col s12 log-errors">
+            {% for message in messages %}
+                {{message}}
+            {% endfor %}
+        </div>
 		<div class="col s12 l4 mb-c8 bb">
 			<span class="das-perfil-subtitle">Núcleo:</span>
 			<span>{{ object.nucleo }}</span>
@@ -52,7 +57,7 @@
 									</td>
 									<td>{{ bien.cantidad_solicitada }}</td>
 									{% if object.status == 'E' and request.user|has_group:'GE' %}
-										<td><input type="number" name="ctd{{ bien.id }}" placeholder="Cantidad"></td>
+										<td><input type="number" name="ctd{{ bien.id }}" {% for cantidad in cantidades %}{% if cantidad.id == bien.id %}placeholder="{{ cantidad.cantidad }} en stock" max="{{ cantidad.cantidad }}"{% endif %}{% endfor %}></td>
 									{% else %}
 										<td>{{ bien.cantidad_aprobada }}</td>
 									{% endif %}
@@ -63,7 +68,6 @@
 				</div>
 				{% if object.status == 'E' and request.user|has_group:'GE' %}
 					{{ form.status }}
-					<input type="text" name="opcion" value="aprobar" style="display: none;">
 					<input type="submit" id="f-btn-submit" style="display: none;">
 					<div class="col s12 lan-btn-content">
 						<button class="lan-btn" id="solicitud-acep">Aceptar</button>
@@ -76,21 +80,34 @@
 				{% csrf_token %}
 				<div class="row">
 					{% for bien in bienes %}
-						<div class="col s12 m6 bien-box">
+						<div class="col s12 m6 bien-box" id="cantidad-{{ bien.id }}">
 							{% for b in bieall %}
-								{% if b.nombre_id == bien.bien_id %}
+								{% if b.nombre_id == bien.bien_id and b.status == 'DI' and b.nucleo != object.nucleo %}
 									<p>
-										<input type="checkbox" id="bien{{ b.id }}" name="bienes" value="{{ b.id }}">
-										<label for="bien{{ b.id }}">{{ b.codigo }} {{ b.nombre }}</label>
+										<input type="checkbox" id="bien{{ b.id }}" name="bienes" value="{{ b.id }}" onclick="revisarCantidad(event,'cantidad-{{ bien.id }}');">
+										<label for="bien{{ b.id }}">{{ b.codigo }} {{ b.nombre }} {{ b.nucleo }}</label>
 									</p>
 								{% endif %}
 							{% endfor %}
 						</div>
+						<script>
+							function revisarCantidad(e,id) {
+								var num = 0;
+								var cuadro = document.getElementById(id);
+								for (var i = 0; i < cuadro.children.length; i++) {
+									if (cuadro.children[i].firstElementChild.checked) {
+										num += 1;
+									}
+								}
+								if (Number(num) > Number('{{ bien.cantidad_aprobada }}')) {
+									e.preventDefault();
+								}
+							}
+						</script>
 					{% endfor %}
 				</div>
 				<div class="col s12 lan-btn-content">
 					{{ form.status }}
-					<input type="text" name="opcion" value="actualizar" style="display: none;">
 					<input type="submit" id="f-btn-submit" style="display: none;">
 					<button class="lan-btn" id="solicitud-actu">Aceptar</button>
 				</div>

@@ -541,7 +541,7 @@ input.lan-btn, input.log-btn {
 
 .das-img {
 	width: 100%;
-	border-radius: 100%;
+	border-radius: 10px;
 	border: 2px solid #EF6C97;
 }
 
@@ -853,6 +853,12 @@ input.lan-btn, input.log-btn {
 
 div.cargado {
 	display: inline-block;
+}
+
+.mas-signo {
+	position: absolute;
+	left: 0;
+	top: 12px;
 }
 
 /* Mediasquerys */

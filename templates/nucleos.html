@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load auth_extras %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Nucleos</h1>
+</div>
+<div class="col s12 m6 mb-c8">
+    <button type="button" onclick="$('#modal1').openModal();" class="lan-btn"><i class="fa fa-plus" style="margin-right: .5rem"></i> Agregar</button>
+    {% if request.user|has_group:'SE' %}
+        <a href="{% url 'principal:agregarCoordinador' %}" class="lan-btn">Asignar coordinador</a>
+    {% endif %}
+</div>
+<div class="col s12">
+    <div class="das-responsive">
+        <table class="das-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th colspan="2">Coordinador</th>
+                </tr>
+            </thead>
+            <tbody id="orq-tbody">
+                {% for object in object_list %}
+                    <tr style="border-top: 1px solid rgba(0,0,0,.1);">
+                        <td>{{ object.id }}</td>
+                        <td style="border-right: 1px solid rgba(0,0,0,.1);">{{ object.nombre }}</td>
+                        {% for coordinador in coordinadores %}
+                            {% if coordinador.nucleo.id == object.id %}
+                                <td>{{ coordinador.nombre }} {{ coordinador.apellido }}</td>
+                                <td>
+                                    <a href="{% url 'principal:coordinador' coordinador.id %}" class="lan-btn"><i class="fa fa-eye"></i></a>
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4 class="das-title" style="font-weight: 600;">Agregar nucleo</h4>
+        <form method="post" class="col s12 mb-c8 bb">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" placeholder="Nombre" name="nombre">
+                    <label for="textarea1">Nombre</label>
+                </div>
+                <div class="col s12 lan-btn-content">
+                    <input type="submit" class="lan-btn" value="Aceptar">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

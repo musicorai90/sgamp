@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Cambiar contraseña</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form" id="orq-form" method="POST">
+        {% csrf_token %}
+        <div class="col s12 log-errors">
+            {% for message in messages %}
+                {{message}}
+            {% endfor %}
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.password }}
+            <label for="password">Contraseña actual</label>
+        </div>
+        <div class="input-field col s12 m6" id="add-bien">
+            {{ form.password2}}
+            <label for="password2">Contraseña nueva</label>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.password3 }}
+            <label for="password3">Confirme contraseña</label>
+        </div>
+        <div class="col s12 lan-btn-content">
+            <button type="button" class="lan-btn" id="pass-acep">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#id_sexo').material_select();
+        $('#id_catedra').material_select();
+        $('#id_nucleo').material_select();
+    });
+</script>
+
+{% endblock %}

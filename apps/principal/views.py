@@ -1,18 +1,22 @@
 from django.shortcuts import render, redirect
 from django.views import View, generic
-from django.contrib.auth.models import User 
+from django.contrib import messages
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, logout
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator
+from django.core.mail import EmailMessage
 from django.forms.utils import ErrorList
 from django.http import JsonResponse
+from django.db.models import Q
+
 from django import forms as FormsModule
 
 from extra_views import CreateWithInlinesView, InlineFormSetFactory
 
-from .mixins import GroupRequiredMixin, ControlAccess, ControlAccess2, ControlAccess3, get_nucleo, get_group
+from .mixins import GroupRequiredMixin, ControlAccess, ControlAccess2, ControlAccess3, get_nucleo, get_group, get_user_manual
 
 from . import models
 from . import forms
@@ -43,6 +47,18 @@ class Index(generic.base.View):
 				context['partituras'] =  partituras
 			return render(request, "dashboard.html", context)
 
+class Mensaje(generic.base.View):
+
+	def post(self, request, *args, **kwargs):
+		email = EmailMessage(
+			request.POST['mensaje-asunto'],
+			'%s \n %s' %(request.POST['mensaje-correo'], request.POST['mensaje-mensaje']),
+			to=['raimong79@gmail.com']
+		)
+		email.send()
+		messages.add_message(request, messages.INFO, "Se ha enviado el correo")
+		return redirect('/')
+
 class Login(LoginView):
 	authentication_form = forms.LoginForm
 	form_class = forms.LoginForm
@@ -64,8 +80,52 @@ class Nosotros(generic.base.TemplateView):
 class Perfil(generic.base.TemplateView):
 	template_name = "perfil.html"
 
-class ModificarPerfil(generic.base.TemplateView):
+	def get_context_data(self, **kwargs):
+		context = super(Perfil, self).get_context_data(**kwargs)
+		context['usuario'] = get_user_manual(self)
+		return context
+
+	def post(self, request, *args, **kwargs):
+		num = request.user.id
+		usuario = get_user_manual(self)
+		usuario.foto = request.FILES['new-img']
+		usuario.save()
+		return redirect('/perfil/')
+
+class CambiarPass(LoginRequiredMixin, generic.edit.FormView):
+	template_name = "cambiar_pass.html"
+	form_class = forms.CambiarPassForm
+	success_url = '/'
+	success_message = "Se ha cambiardo la contraseña"
+
+	def form_valid(self, form):
+		a = self.request.user
+		if a.check_password(self.request.POST['password']):
+			a.set_password(self.request.POST['password2'])
+			a.save()
+		else:
+			messages.add_message(self.request, messages.INFO, "La contraseña actual es incorrecta")
+			self.success_url = '/cambiar/'
+		return super().form_valid(form)
+
+class ModificarPerfil(LoginRequiredMixin, generic.edit.FormView):
 	template_name = "modificarPerfil.html"
+	form_class = forms.ModificarPerfilForm
+	success_url = '/perfil/'
+
+	def form_valid(self, form):
+		usuario = get_user_manual(self)
+		usuario.nombre = self.request.POST['nombre']
+		usuario.apellido = self.request.POST['apellido']
+		usuario.telefono = self.request.POST['telefono']
+		usuario.direccion = self.request.POST['direccion']
+		usuario.save()
+		return super().form_valid(form)
+
+	def get_context_data(self, **kwargs):
+		context = super(ModificarPerfil, self).get_context_data(**kwargs)
+		context['usuario'] = get_user_manual(self)
+		return context
 
 class AgregarBien(generic.base.TemplateView):
 	template_name = "agregarBien.html"
@@ -82,7 +142,7 @@ class Solicitudes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 			nucleo = get_nucleo(self)
 			bienes = models.SolicitudBien.objects.filter(nucleo_id=nucleo)
 			instrumentos = models.SolicitudInstrumento.objects.filter(nucleo_id=nucleo)
-		elif str(self.request.user.groups.get() == "SE"):
+		elif get_group(self) == "SE":
 			bienes = models.SolicitudBien.objects.filter(status="A")
 			bieall = models.SolicitudBien.objects.all()
 			for bien in bieall:
@@ -161,17 +221,26 @@ class SolicitudBien(LoginRequiredMixin, GroupRequiredMixin, ControlAccess, gener
 
 	def get_context_data(self, **kwargs):
 		context = super(SolicitudBien, self).get_context_data(**kwargs)
-		context['bienes'] = models.SolicitudTipoBien.objects.filter(solicitud_id=self.object.id)
+		tipos = models.SolicitudTipoBien.objects.filter(solicitud_id=self.object.id)
+		context['bienes'] = tipos
 		context['bieall'] = models.Bien.objects.all()
+		cantidades = []
+		for tipo in tipos:
+			num = len(models.Bien.objects.filter(~Q(nucleo_id=self.object.nucleo.id),nombre_id=tipo.bien.id,status='DI'))
+			cantidades.append({'id': tipo.id, 'cantidad': num})
+		context['cantidades'] = cantidades
 		return context
 
 	def form_valid(self, form):
 		self.object = form.save()
-		if self.request.POST['opcion'] == 'aprobar':
+		if get_group(self) == 'GE':
 			for bien in models.SolicitudTipoBien.objects.filter(solicitud_id=self.object.id):
 				bien.cantidad_aprobada = self.request.POST.get('ctd%i' %(bien.id))
+				if int(self.request.POST.get('ctd%i' %(bien.id))) > int(bien.cantidad_solicitada):
+					messages.add_message(self.request, messages.INFO, 'Hay cantiades mayores a las solicitadas')
+					return redirect('/solicitudes/bienes/%d/' %(self.object.id))
 				bien.save()
-		elif self.request.POST['opcion'] == 'actualizar':
+		elif get_group(self) == 'CN':
 			bienes = self.request.POST.getlist('bienes')
 			nucleo = models.Nucleo.objects.get(id=int(self.object.nucleo_id))
 			for bien in bienes:
@@ -188,17 +257,26 @@ class SolicitudInstrumento(LoginRequiredMixin, GroupRequiredMixin, ControlAccess
 
 	def get_context_data(self, **kwargs):
 		context = super(SolicitudInstrumento, self).get_context_data(**kwargs)
-		context['bienes'] = models.SolicitudTipoInstrumento.objects.filter(solicitud_id=self.object.id)
+		tipos = models.SolicitudTipoInstrumento.objects.filter(solicitud_id=self.object.id)
+		context['bienes'] = tipos
 		context['bieall'] = models.Instrumento.objects.all()
+		cantidades = []
+		for tipo in tipos:
+			num = len(models.Instrumento.objects.filter(nombre_id=tipo.instrumento.id,status='DI'))
+			cantidades.append({'id': tipo.id, 'cantidad': num})
+		context['cantidades'] = cantidades
 		return context
 
 	def form_valid(self, form):
 		self.object = form.save()
-		if self.request.POST['opcion'] == 'aprobar':
+		if get_group(self) == 'GE':
 			for instrumento in models.SolicitudTipoInstrumento.objects.filter(solicitud_id=self.object.id):
 				instrumento.cantidad_aprobada = self.request.POST.get('ctd%i' %(instrumento.id))
+				if int(self.request.POST.get('ctd%i' %(instrumento.id))) > int(instrumento.cantidad_solicitada):
+					messages.add_message(self.request, messages.INFO, 'Hay cantiades mayores a las solicitadas')
+					return redirect('/solicitudes/instrumentos/%d/' %(self.object.id))
 				instrumento.save()
-		elif self.request.POST['opcion'] == 'actualizar':
+		elif get_group(self) == 'CN':
 			instrumentos = self.request.POST.getlist('bienes')
 			nucleo = models.Nucleo.objects.get(id=int(self.object.nucleo_id))
 			for instrumento in instrumentos:
@@ -232,7 +310,7 @@ class Bienes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 		bienes = models.Bien.objects.all()[::-1]
 		if get_group(self) == 'CN':
 			nucleo = get_nucleo(self)
-			bienes = models.Bien.objects.filter(nucleo_id=nucleo)
+			bienes = models.Bien.objects.filter(nucleo_id=nucleo)[::-1]
 		return bienes
 
 class AgregarBien(LoginRequiredMixin, GroupRequiredMixin, generic.edit.CreateView):
@@ -279,7 +357,7 @@ class AgregarInstrumento(LoginRequiredMixin, GroupRequiredMixin, generic.edit.Cr
 			tipo = models.TipoInstrumento.objects.create(nombre=self.request.POST['new-bien'])
 			self.object.nombre = tipo
 			self.object.save()
-		return super(AgregarBien, self).form_valid(form)
+		return super(AgregarInstrumento, self).form_valid(form)
 
 class InstrumentoDesincorporar(View, GroupRequiredMixin, LoginRequiredMixin):
 	group_required = [u'CN']
@@ -603,14 +681,14 @@ class TipoBienes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 
 class TipoInstrumentos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	group_required = [u'SE']
-	template_name = "tipos_instrumentos.html"
+	template_name = "tipos_instrumento.html"
 	paginate_by = 5
 	ordering = ['-id']
 	model = models.TipoInstrumento
 
 	def post(self, request, *args, **kwargs):
 		models.TipoInstrumento.objects.create(nombre=request.POST['nombre'])
-		return redirect('principal:tipoBienes')
+		return redirect('principal:tipoInstrumentos')
 
 class Pagos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	group_required = [u'CB']
@@ -640,12 +718,159 @@ class AgregarPartitura(LoginRequiredMixin, GroupRequiredMixin, generic.CreateVie
 
 class AgregarAutor(View):
 	
-	def post(self, request, *args, ** kwargs):
+	def post(self, request, *args, **kwargs):
 		autor = models.Autor.objects.create(nombre=request.POST['autor-nombre']).save()
 		return redirect('principal:agregarPartitura')
 
 class AgregarVoz(View):
 	
-	def post(self, request, *args, ** kwargs):
+	def post(self, request, *args, **kwargs):
 		voz = models.Voz.objects.create(nombre=request.POST['voz-nombre']).save()
 		return redirect('principal:agregarPartitura')
+
+class Nucleo(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
+	group_required = [u'GE',u'SE']
+	template_name = "nucleos.html"
+	model = models.Nucleo
+
+	def get_context_data(self, **kwargs):
+		context = super(Nucleo, self).get_context_data(**kwargs)
+		coordinadores = models.Coordinador.objects.all()
+		context['coordinadores'] = coordinadores
+		nucleos = models.Nucleo.objects.all()
+		indices = []
+		for nucleo in nucleos:
+			con = False
+			for coordinador in coordinadores:
+				if coordinador.nucleo == nucleo.id:
+					con = True
+			if not con:
+				indices.append(nucleo.id)
+		context['indices'] = indices
+		return context
+
+	def post(self, request, *args, **kwargs):
+		nucleo = models.Nucleo.objects.create(nombre=request.POST['nombre']).save()
+		return redirect('principal:nucleos')
+
+class Coordinador(LoginRequiredMixin, GroupRequiredMixin, generic.DetailView):
+	group_required = [u'GE',u'SE']
+	template_name = "coordinador.html"
+	model = models.Coordinador
+
+	def post(self, request, *args, **kwargs):
+		print('Hola1')
+		self.object = self.get_object()
+		print('Hola2')
+		cedula = self.object.usuario.username
+		print('Hola3')
+		usuario = User.objects.get(username=cedula)
+		print('Hola4')
+		self.object.delete()
+		print('Hola5')
+		usuario.delete()
+		print('Hola6')
+		return redirect('principal:nucleos')
+
+class AgregarCoordinador(LoginRequiredMixin, GroupRequiredMixin, generic.CreateView):
+	group_required = [u'SE']
+	model = models.Coordinador
+	template_name = "agregar_coordinador.html"
+	fields = ['nucleo','nombre','apellido','telefono','direccion','email']
+
+	def get_context_data(self, **kwargs):
+		context = super(AgregarCoordinador, self).get_context_data(**kwargs)
+		nucleos = models.Nucleo.objects.all()
+		coordinadores = models.Coordinador.objects.all()
+		lista = models.Nucleo.objects.none()
+		for nucleo in nucleos:
+			con = True
+			for coordinador in coordinadores:
+				if coordinador.nucleo.id == nucleo.id:
+					con = False
+			if con:
+				lista |= models.Nucleo.objects.filter(id=nucleo.id)
+		context['form'].fields['nucleo'].queryset = lista
+		return context
+
+	def form_valid(self, form):
+		obj = form.save(commit=False)
+		cedula = self.request.POST['cedula']
+		if len(User.objects.filter(username=cedula)) > 0:
+			usuario = User.objects.get(username=cedula)
+			nivel = usuario.groups.get()
+			if str(nivel) == 'CN':
+				messages.add_message(self.request, messages.INFO, 'Ya esta cédula está registrada')
+				return redirect('principal:agregarCoordinador')
+			else:
+				usuario.groups.set('2')
+				obj.usuario = usuario
+				obj.save()
+				return redirect("principal:nucleos")
+		usuario = User.objects.create_user(self.request.POST['cedula'],email=self.request.POST['email'],password=self.request.POST['cedula'])
+		usuario.groups.set('2')
+		obj.usuario = usuario
+		obj.save()
+		return redirect("principal:nucleos")
+
+class Secretaria(LoginRequiredMixin, GroupRequiredMixin, generic.base.TemplateView):
+	group_required = [u'GE']
+	template_name = "secretaria.html"
+
+	def get_context_data(self, **kwargs):
+		context = super(Secretaria, self).get_context_data(**kwargs)
+		usuarios = User.objects.all()
+		for usuario in usuarios:
+			if usuario.username != 'admin':
+				nivel = usuario.groups.get()
+				if str(nivel) == 'SE':
+					user = models.Perfil.objects.get(usuario_id=usuario.id)
+		context['object'] = user
+		return context
+
+class AgregarSecretaria(LoginRequiredMixin, GroupRequiredMixin, generic.edit.FormView):
+	group_required = [u'GE']
+	template_name = "agregar_secretaria.html"
+	form_class = forms.SecretariaForm
+	success_url = '/'
+
+	def get_context_data(self, **kwargs):
+		context = super(AgregarSecretaria, self).get_context_data(**kwargs)
+		usuarios = User.objects.all()
+		for usuario in usuarios:
+			if usuario.username != 'admin':
+				nivel = usuario.groups.get()
+				if str(nivel) == 'SE':
+					user = models.Perfil.objects.get(usuario_id=usuario.id)
+		context['usuario'] = user
+		return context
+
+	def form_valid(self, form):
+		usuarios = User.objects.all()
+		for usuario in usuarios:
+			if usuario.username != 'admin':
+				nivel = usuario.groups.get()
+				if str(nivel) == 'SE':
+					user = models.Perfil.objects.get(usuario_id=usuario.id)
+					user2 = usuario
+					user.delete()
+		if len(User.objects.filter(username=self.request.POST['cedula'])) > 0:
+			user3 = User.objects.get(username=self.request.POST['cedula'])
+			user3.groups.set('3')
+		else:
+			user2.delete()
+			user5 = User.objects.create_user(self.request.POST['cedula'],password=self.request.POST['cedula'])
+			user5.groups.set('3')
+			user4 = form.save(commit=False)
+			user4.usuario = user5
+			user4.save()
+			return redirect('principal:secretaria')
+
+class Catedra(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
+	group_required = [u'GE']
+	template_name = "catedras.html"
+	model = models.Catedra
+
+	def post(self, request, *args, **kwargs):
+		models.Catedra.objects.create(nombre=request.POST['nombre'])
+		return redirect('principal:catedras')

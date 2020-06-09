@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load auth_extras %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Cátedras</h1>
+</div>
+<div class="col s12 m6 mb-c8">
+    <button type="button" onclick="$('#modal1').openModal()" class="lan-btn"><i class="fa fa-plus" style="margin-right: .5rem"></i> Agregar</button>
+</div>
+<div class="col s12">
+    <div class="das-responsive">
+        <table class="das-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                </tr>
+            </thead>
+            <tbody id="orq-tbody">
+                {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.id }}</td>
+                        <td>{{ object.nombre }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modal1" class="modal">
+    <div class="modal-content">
+        <h4 class="das-title" style="font-weight: 600;">Agregar cátedra</h4>
+        <form method="post" class="col s12 mb-c8 bb">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-field col s12">
+                    <input type="text" placeholder="Nombre" name="nombre">
+                    <label for="textarea1">Nombre</label>
+                </div>
+                <div class="col s12 lan-btn-content">
+                    <input type="submit" class="lan-btn" value="Aceptar">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

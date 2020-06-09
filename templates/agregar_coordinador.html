@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load auth_extras %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Agregar Coordinador</h1>
+</div>
+
+<div class="col s12">
+    <form class="row das-form" method="POST">
+        {% csrf_token %}
+        <div class="col s12 log-errors">
+            {% for message in messages %}
+                {{message}}
+            {% endfor %}
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.nucleo }}
+            <label for="direccion">Núcleo</label>
+        </div>
+        <div class="input-field col s12 m6">
+            <input type="number" placeholder="Cédula" name="cedula" id="id_cedula">
+            <label for="cedula">Cédula</label>
+        </div>
+        <div class="input-field col s12 m6" id="add-bien">
+            {{ form.nombre|addplaceholder:'Nombre'}}
+            <label for="nombre">Nombre</label>
+        </div>
+        <div class="input-field col s12 m6">
+            {{ form.apellido|addplaceholder:'Apellido' }}
+            <label for="apellido">Apellido</label>
+        </div>
+        <div class="input-field col s12 m6">
+            <span class="mas-signo">+</span>
+            {{ form.telefono|addplaceholder:'Teléfono' }}
+            <label for="direccion">Teléfono</label>
+        </div>
+        <div class="input-field col s12">
+            {{ form.direccion|addclass:'materialize-textarea' }}
+            <label for="direccion">Dirección</label>
+        </div>
+        <div class="input-field col s12">
+            {{ form.email|addplaceholder:'Correo' }}
+            <label for="direccion">Correo</label>
+        </div>
+        <div class="col s12 lan-btn-content">
+            <input type="submit" id="f-btn-submit" style="display: none;">
+            <button type="button" class="lan-btn" id="nuevo-coordinador">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#id_nucleo').material_select();
+    });
+
+    var cedula = document.getElementById('id_cedula');
+    cedula.max = '99999999';
+    cedula.autocomplete = "off";
+    cedula.addEventListener('keypress', function(e) {
+        if (document.getElementById('id_cedula').value.length + 1 == 9 || e.key == 'e' || e.key == '+' || e.key == '-') {
+            e.preventDefault();
+        }
+    });
+    cedula.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    cedula.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var nombre = document.getElementById('id_nombre');
+    nombre.addEventListener('keypress', function(e) {
+        var val = false;
+        var letters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+        for (var i = 0; i < letters.length; i++) {
+            if (e.key == letters[i]) {
+                val = true;
+            }
+        }
+        if ((!val)&&(e.key != ' ')) {
+            e.preventDefault();
+        }
+    });
+    nombre.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    nombre.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var apellido = document.getElementById('id_apellido');
+    apellido.addEventListener('keypress', function(e) {
+        var val = false;
+        var letters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+        for (var i = 0; i < letters.length; i++) {
+            if (e.key == letters[i]) {
+                val = true;
+            }
+        }
+        if ((!val)&&(e.key != ' ')) {
+            e.preventDefault();
+        }
+    });
+    apellido.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    apellido.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var telefono = document.getElementById('id_telefono');
+    telefono.value = +58;
+    telefono.addEventListener('keypress', function(e) {
+        if (document.getElementById('id_telefono').value.length + 1 == 13 || e.key == 'e' || e.key == '+' || e.key == '-') {
+            e.preventDefault();
+        }
+    });
+</script>
+
+<!-- 37210102 -->
+
+{% endblock %}

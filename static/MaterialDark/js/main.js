@@ -87,7 +87,7 @@ $(document).ready(function(){
             closeOnConfirm: false,
             cancelButtonText: "No"
         }, function(){
-            document.getElementById('id_nucleo').selectedIndex = '1';
+            document.getElementById('id_nucleo').selectedIndex = '2';
             document.getElementById('f-btn-submit').click(); 
         });
     });
@@ -189,6 +189,114 @@ $(document).ready(function(){
             cancelButtonText: "No"
         }, function(){
             document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#main-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#cambiar-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: false,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#modificar-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: true,
+            cancelButtonText: "No"
+        }, function(){
+            if (document.getElementById('id_telefono').value.length < 12) {
+                alert('El teléfono es incompleto');
+            } else {
+                document.getElementById('f-btn-submit').click(); 
+            }        
+        });
+    });
+    $('#pass-acep').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: true,
+            cancelButtonText: "No"
+        }, function(){
+            if (document.getElementById('log-form-password-2').value != document.getElementById('log-form-password-3').value) {
+                alert('La confirmación de contraseña es incorrecta.');
+            } else {
+                document.getElementById('orq-form').submit();
+            }
+        });
+    });
+    $('#eliminar-coordinador').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: true,
+            cancelButtonText: "No"
+        }, function(){
+            document.getElementById('f-btn-submit').click(); 
+        });
+    });
+    $('#nuevo-coordinador').on('click', function(e){
+        e.preventDefault();
+        swal({ 
+            title: "¿Está seguro?",   
+            //text: "The current session will be closed and will leave the system",   
+            type: "warning",   
+            showCancelButton: true,   
+            confirmButtonColor: "#1b5e20",   
+            confirmButtonText: "Sí",
+            animation: "slide-from-top",   
+            closeOnConfirm: true,
+            cancelButtonText: "No"
+        }, function(){
+            if (document.getElementById('id_telefono').value.length < 12) {
+                alert('El teléfono es incompleto');
+            } else {
+                document.getElementById('f-btn-submit').click(); 
+            }
         });
     });
     $('.btn-Search').on('click', function(e){
