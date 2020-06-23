@@ -31,7 +31,7 @@
                     <th style="width: 50px;">#</th>
                     <th>Fecha</th>
                     <th>Instrumento</th>
-                    <th>Alumno</th>
+                    <th colspan="2">Alumno</th>
                 </tr>
             </thead>
             <tbody id="orq-tbody">
@@ -41,6 +41,9 @@
                         <td>{{ asignacion.fecha_ini }}</td>
                         <td>{{ asignacion.instrumento }}</td>
                         <td>{{ asignacion.musico }}</td>
+                        <td>
+                            <a href="{% url 'principal:asignacion' asignacion.id %}" class="lan-btn"><i class="fa fa-eye"></i></i></a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -87,10 +90,10 @@
                     } else {
                         document.getElementById('orq-tbody').innerHTML = "";
                     }
-                    
+
                     for (var i = datos.length - 1; i >= 0; i--) {
                         var newTr = document.createElement('TR');
-                        
+
                         var strHTML = `
                             <td>${datos[i].id}</td>
                             <td>${datos[i].fecha_ini}</td>

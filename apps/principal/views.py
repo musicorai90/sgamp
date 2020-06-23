@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from django.forms.utils import ErrorList
 from django.http import JsonResponse
 from django.db.models import Q
+from django.utils import timezone
 
 from django import forms as FormsModule
 
@@ -23,6 +24,16 @@ from . import forms
 
 from itertools import chain
 from operator import attrgetter
+
+import datetime
+from dateutil.relativedelta import relativedelta
+
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
 
 class Index(generic.base.View):
 	def get(self, request, *args, **kwargs):
@@ -127,9 +138,6 @@ class ModificarPerfil(LoginRequiredMixin, generic.edit.FormView):
 		context['usuario'] = get_user_manual(self)
 		return context
 
-class AgregarBien(generic.base.TemplateView):
-	template_name = "agregarBien.html"
-
 class Solicitudes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	group_required = [u'GE', u'CN', u'SE']
 	template_name = "solicitudes.html"
@@ -177,7 +185,7 @@ class AgregarSolicitudBien(LoginRequiredMixin, GroupRequiredMixin, generic.edit.
 			try:
 				bien = models.TipoBien.objects.get(id=int(self.request.POST['bien%d' %(x+1)]))
 			except:
-				bien = models.TipoBien.objects.create(nombre=self.request.POST['bien-nuevo-%d' %(x+1)]) 
+				bien = models.TipoBien.objects.create(nombre=self.request.POST['bien-nuevo-%d' %(x+1)])
 			models.SolicitudTipoBien.objects.create(
 				solicitud = self.object,
 				bien = bien,
@@ -205,7 +213,7 @@ class AgregarSolicitudInstrumento(LoginRequiredMixin, GroupRequiredMixin, generi
 			try:
 				bien = models.TipoInstrumento.objects.get(id=int(self.request.POST['bien%d' %(x+1)]))
 			except:
-				bien = models.TipoInstrumento.objects.create(nombre=self.request.POST['bien-nuevo-%d' %(x+1)]) 
+				bien = models.TipoInstrumento.objects.create(nombre=self.request.POST['bien-nuevo-%d' %(x+1)])
 			models.SolicitudTipoInstrumento.objects.create(
 				solicitud = self.object,
 				bien = bien,
@@ -296,8 +304,8 @@ class BienDesincorporar(View, GroupRequiredMixin, LoginRequiredMixin):
 	def post(self, request, *args, **kwargs):
 		bien_id = int(request.POST['id'])
 		bien = models.Bien.objects.get(id=bien_id)
-		mensaje = str(request.POST['mensaje']) 
-		models.BienDesincorporado.objects.create(nombre=bien,mensaje=mensaje)	
+		mensaje = str(request.POST['mensaje'])
+		models.BienDesincorporado.objects.create(nombre=bien,mensaje=mensaje)
 		return redirect('/')
 
 class Bienes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
@@ -365,8 +373,8 @@ class InstrumentoDesincorporar(View, GroupRequiredMixin, LoginRequiredMixin):
 	def post(self, request, *args, **kwargs):
 		instrumento_id = int(request.POST['id'])
 		instrumento = models.Instrumento.objects.get(id=instrumento_id)
-		mensaje = str(request.POST['mensaje']) 
-		models.InstrumentoDesincorporado.objects.create(nombre=instrumento,mensaje=mensaje)	
+		mensaje = str(request.POST['mensaje'])
+		models.InstrumentoDesincorporado.objects.create(nombre=instrumento,mensaje=mensaje)
 		return redirect('/')
 
 class Profesores(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
@@ -376,10 +384,10 @@ class Profesores(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	ordering = ['-id']
 
 	def get_queryset(self):
-		profesores = models.Musico.objects.filter(tipo="P")
+		profesores = models.Musico.objects.filter(tipo="P")[::-1]
 		if get_group(self) == 'CN':
 			nucleo = get_nucleo(self)
-			profesores = models.Musico.objects.filter(tipo="P",nucleo_id=nucleo)
+			profesores = models.Musico.objects.filter(tipo="P",nucleo_id=nucleo)[::-1]
 		return profesores
 
 class AgregarProfesor(LoginRequiredMixin, GroupRequiredMixin, generic.CreateView):
@@ -389,7 +397,13 @@ class AgregarProfesor(LoginRequiredMixin, GroupRequiredMixin, generic.CreateView
 	form_class = forms.AgregarMusicoForm
 
 	def form_valid(self, form):
-		self.object = form.save()
+		self.object = form.save(commit=False)
+		if datetime.date.today() - relativedelta(years=12) < self.object.fecha:
+			messages.add_message(self.request, messages.INFO, 'La edad es muy baja')
+			return redirect('principal:agregarProfesor')
+		if self.object.fecha + relativedelta(years=4) > self.object.fecha_ing:
+			messages.add_message(self.request, messages.INFO, 'La edad minima de ingreso debe ser 4 años')
+			return redirect('principal:agregarProfesor')
 		user = User.objects.create_user(self.request.POST['cedula'],email=self.request.POST['email'],password=self.request.POST['cedula'])
 		user.groups.set('6')
 		return super(AgregarProfesor, self).form_valid(form)
@@ -406,10 +420,10 @@ class Alumnos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	ordering = ['-id']
 
 	def get_queryset(self):
-		profesores = models.Musico.objects.filter(tipo="A")
+		profesores = models.Musico.objects.filter(tipo="A")[::-1]
 		if get_group(self) == 'CN':
 			nucleo = get_nucleo(self)
-			profesores = models.Musico.objects.filter(tipo="A",nucleo_id=nucleo)
+			profesores = models.Musico.objects.filter(tipo="A",nucleo_id=nucleo)[::-1]
 		return profesores
 
 class AgregarAlumno(LoginRequiredMixin, GroupRequiredMixin, generic.CreateView):
@@ -419,8 +433,13 @@ class AgregarAlumno(LoginRequiredMixin, GroupRequiredMixin, generic.CreateView):
 	form_class = forms.AgregarMusicoForm
 
 	def form_valid(self, form):
-		print("Hola")
-		self.object = form.save()
+		self.object = form.save(commit=False)
+		if datetime.date.today() - relativedelta(years=4) < self.object.fecha:
+			messages.add_message(self.request, messages.INFO, 'La edad es muy baja')
+			return redirect('principal:agregarProfesor')
+		if self.object.fecha + relativedelta(years=4) > self.object.fecha_ing:
+			messages.add_message(self.request, messages.INFO, 'La edad minima de ingreso debe ser 4 años')
+			return redirect('principal:agregarProfesor')
 		user = User.objects.create_user(self.request.POST['cedula'],email=self.request.POST['email'],password=self.request.POST['cedula'])
 		user.groups.set('7')
 		return super(AgregarAlumno, self).form_valid(form)
@@ -462,6 +481,31 @@ class AgregarAsignacion(LoginRequiredMixin, GroupRequiredMixin, generic.CreateVi
 	form_class = forms.AgregarAsignacionForm
 	model = models.Asignacion
 	template_name = "agregar_asignacion.html"
+
+	def form_valid(self, form):
+	    self.object = form.save(commit=False)
+	    if len(models.Asignacion.objects.filter(musico_id=self.object.musico.id,status="A")) > 0:
+	        messages.add_message(self.request, messages.INFO, "Ya este músico posee instrumento")
+	        return redirect('principal:agregarAsignacion')
+	    elif len(models.Asignacion.objects.filter(instrumento_id=self.object.instrumento.id,status="A")) > 0:
+	        messages.add_message(self.request, messages.INFO, "Ya existe un músico con este instrumento")
+	        return redirect('principal:agregarAsignacion')
+	    elif self.object.musico.nucleo != self.object.instrumento.nucleo:
+	        messages.add_message(self.request, messages.INFO, "Los núcleos no coinciden")
+	        return redirect('principal:agregarAsignacion')
+	    return super().form_valid(form)
+
+class Asignacion(LoginRequiredMixin, GroupRequiredMixin, generic.DetailView):
+    group_required = [u'CB']
+    model = models.Asignacion
+    template_name = "asignacion.html"
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.status = "I"
+        self.object.fecha_fin = timezone.now()
+        self.object.save()
+        return redirect('principal:asignaciones')
 
 class Galeria(LoginRequiredMixin, GroupRequiredMixin, generic.edit.CreateView):
 	group_required = [u'GE']
@@ -676,7 +720,14 @@ class TipoBienes(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	model = models.TipoBien
 
 	def post(self, request, *args, **kwargs):
-		models.TipoBien.objects.create(nombre=request.POST['nombre'])
+		con = 0
+		for tipo in models.TipoBien.objects.all():
+			if tipo.nombre == request.POST['nombre']:
+				con += 1
+		if con:
+			messages.add_message(request, messages.INFO, 'Este tipo ya existe')
+		else:
+			models.TipoBien.objects.create(nombre=request.POST['nombre'])
 		return redirect('principal:tipoBienes')
 
 class TipoInstrumentos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
@@ -687,7 +738,14 @@ class TipoInstrumentos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView)
 	model = models.TipoInstrumento
 
 	def post(self, request, *args, **kwargs):
-		models.TipoInstrumento.objects.create(nombre=request.POST['nombre'])
+		con = 0
+		for tipo in models.TipoInstrumento.objects.all():
+			if tipo.nombre == request.POST['nombre']:
+				con += 1
+		if con:
+			messages.add_message(request, messages.INFO, 'Este tipo ya existe')
+		else:
+			models.TipoInstrumento.objects.create(nombre=request.POST['nombre'])
 		return redirect('principal:tipoInstrumentos')
 
 class Pagos(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
@@ -717,13 +775,13 @@ class AgregarPartitura(LoginRequiredMixin, GroupRequiredMixin, generic.CreateVie
 		return redirect('principal:index')
 
 class AgregarAutor(View):
-	
+
 	def post(self, request, *args, **kwargs):
 		autor = models.Autor.objects.create(nombre=request.POST['autor-nombre']).save()
 		return redirect('principal:agregarPartitura')
 
 class AgregarVoz(View):
-	
+
 	def post(self, request, *args, **kwargs):
 		voz = models.Voz.objects.create(nombre=request.POST['voz-nombre']).save()
 		return redirect('principal:agregarPartitura')
@@ -874,3 +932,53 @@ class Catedra(LoginRequiredMixin, GroupRequiredMixin, generic.ListView):
 	def post(self, request, *args, **kwargs):
 		models.Catedra.objects.create(nombre=request.POST['nombre'])
 		return redirect('principal:catedras')
+
+class RenderizarPDF():
+
+    def __init__(self, uri, rel):
+        self.uri = uri
+        self.rel = rel
+
+    def link_callback(self):
+        result = finders.find(self.uri)
+        if result:
+            if not isinstance(result, (list, tuple)):
+                result = [result]
+            result = list(os.path.realpath(path) for path in result)
+            path=result[0]
+        else:
+            sUrl = settings.STATIC_URL        # Typically /static/
+            sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
+            mUrl = settings.MEDIA_URL         # Typically /media/
+            mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+
+            if self.uri.startswith(mUrl):
+                path = os.path.join(mRoot, self.uri.replace(mUrl, ""))
+            elif self.uri.startswith(sUrl):
+                path = os.path.join(sRoot, self.uri.replace(sUrl, ""))
+            else:
+                return self.uri
+
+        if not os.path.isfile(path):
+            raise Exception(
+                'media URI must start with %s or %s' % (sUrl, mUrl)
+            )
+        return path
+
+class SolicitudesPDF(generic.base.View):
+
+    def get(self, request, *args, **kwargs):
+        template_path = 'solicitudes_pdf.html'
+        context = {'myvar': 'this is your template context'}
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+        template = get_template(template_path)
+        html = template.render(context)
+
+        # create a pdf
+        pisa_status = pisa.CreatePDF(
+           html, dest=response, link_callback=RenderizarPDF.link_callback)
+        # if error then show some funy view
+        if pisa_status.err:
+           return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response

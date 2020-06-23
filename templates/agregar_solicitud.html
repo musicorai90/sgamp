@@ -21,7 +21,10 @@
 <div class="col s12">
 	{% for field in form %}
 	    <div class="fieldWrapper">
-	        {{ field.errors }}
+	        {% if field.errors %}
+    	        {{ field.label_tag }}
+    	        {{ field.errors }}
+	        {% endif %}
 	    </div>
 	{% endfor %}
 </div>
@@ -100,7 +103,12 @@
 	    $('select').material_select();
 	}
 
-	document.getElementById('id_nucleo_{{ nucleo }}').click();
+	var nucleos = document.getElementById('id_nucleo');
+	for (var i = nucleos.children.length - 1; i >= 0; i--) {
+	    if (nucleos.children[i].firstElementChild.firstElementChild.value == '{{ nucleo }}') {
+	        nucleos.children[i].firstElementChild.click();
+	    }
+    };
 </script>
 
 {% endblock %}

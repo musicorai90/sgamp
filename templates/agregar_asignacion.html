@@ -32,6 +32,9 @@
 
 <script>
     $('select').material_select();
+    {% for message in messages %}
+        Materialize.toast('{{ message }}', 4000);
+    {% endfor %}
 </script>
 
 {% endblock %}

@@ -34,6 +34,7 @@ urlpatterns = [
 	path('alumnos/agregar/',views.AgregarAlumno.as_view(),name="agregarAlumno"),
 	path('alumnos/<int:pk>/',views.Alumno.as_view(),name="alumno"),
 	path('asignaciones/',views.Asignaciones.as_view(),name="asignaciones"),
+	path('asignaciones/<int:pk>/',views.Asignacion.as_view(),name="asignacion"),
 	path('asignaciones/agregar/',views.AgregarAsignacion.as_view(),name="agregarAsignacion"),
 	path('galeria/',views.Galeria.as_view(),name="galeria"),
 	path('galeria/visibles/',views.GaleriaVisible.as_view(),name="galeriaVisible"),
@@ -56,4 +57,5 @@ urlpatterns = [
 	path('secretaria/agregar/',views.AgregarSecretaria.as_view(),name="agregarSecretaria"),
 	path('coordinador/<int:pk>/',views.Coordinador.as_view(),name="coordinador"),
 	path('coordinador/agregar/',views.AgregarCoordinador.as_view(),name="agregarCoordinador"),
+	path('solicitudes/pdf/',views.SolicitudesPDF.as_view(),name="solicitudesPDF"),
 ]

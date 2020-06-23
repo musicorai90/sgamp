@@ -183,6 +183,7 @@ class Asignacion(models.Model):
 	instrumento = models.ForeignKey(Instrumento, on_delete="cascade")
 	fecha_ini = models.DateField(default=timezone.now)
 	fecha_fin = models.DateField(null=True,blank=True)
+	status = models.CharField(max_length=1, default="A")
 
 	def get_absolute_url(self):
 		return reverse('principal:asignaciones')

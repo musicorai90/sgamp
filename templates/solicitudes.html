@@ -11,8 +11,11 @@
 <form method="post" id="buscador-form" class="col s12">
     {% csrf_token %}
     <div class="row buscador-form">
+        <div class="col s12 m3">
+            <a href="{% url 'principal:solicitudesPDF' %}" class="lan-btn">PDF</a>
+        </div>
         {% if request.user|has_group:'CN' %}
-        <div class="col s12 m6">
+        <div class="col s12 m3">
             <a href="#" class="dropdown-trigger lan-btn" data-activates="dropdown1">Solicitar</a>
             <ul id="dropdown1" class="dropdown-content">
                 <li><a href="{% url 'principal:agregarSolicitudBien' %}">Bienes</a></li>
@@ -107,10 +110,10 @@
                     } else {
                         document.getElementById('orq-tbody').innerHTML = "";
                     }
-                    
+
                     for (var i = solicitudes.length - 1; i >= 0; i--) {
                         var newTr = document.createElement('TR');
-                        
+
                         var strHTML = `
                             <td>${solicitudes[i].id}</td>
                             <td>${solicitudes[i].nucleo}</td>
@@ -140,9 +143,9 @@
                         if (solicitudes[i].tipo == 'B') {
                             strHTML += `
                                 <td style="width: 100px;">
-                                    <a href="{% url 'principal:solicitudBien' 
+                                    <a href="{% url 'principal:solicitudBien'
                             `
-                            strHTML += solicitudes[i].id 
+                            strHTML += solicitudes[i].id
 
                             strHTML += `
                                  %}" class="lan-btn"><i class="fa fa-eye"></i></a>
@@ -151,10 +154,10 @@
                         } else {
                             strHTML += `
                                 <td style="width: 100px;">
-                                    <a href="{% url 'principal:solicitudInstrumento' 
+                                    <a href="{% url 'principal:solicitudInstrumento'
                             `
 
-                            strHTML += solicitudes[i].id 
+                            strHTML += solicitudes[i].id
 
                             strHTML += `
                                  %}" class="lan-btn"><i class="fa fa-eye"></i></a>

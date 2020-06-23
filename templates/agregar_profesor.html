@@ -69,6 +69,73 @@
         $('#id_catedra').material_select();
         $('#id_nucleo').material_select();
       });
+
+    var cedula = document.getElementById('id_cedula');
+    cedula.max = '99999999';
+    cedula.autocomplete = "off";
+    cedula.addEventListener('keypress', function(e) {
+        if (document.getElementById('id_cedula').value.length + 1 == 9 || e.key == 'e' || e.key == '+' || e.key == '-') {
+            e.preventDefault();
+        }
+    });
+    cedula.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    cedula.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var nombre = document.getElementById('id_nombre');
+    nombre.addEventListener('keypress', function(e) {
+        var val = false;
+        var letters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+        for (var i = 0; i < letters.length; i++) {
+            if (e.key == letters[i]) {
+                val = true;
+            }
+        }
+        if ((!val)&&(e.key != ' ')) {
+            e.preventDefault();
+        }
+    });
+    nombre.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    nombre.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var apellido = document.getElementById('id_apellido');
+    apellido.addEventListener('keypress', function(e) {
+        var val = false;
+        var letters = "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+        for (var i = 0; i < letters.length; i++) {
+            if (e.key == letters[i]) {
+                val = true;
+            }
+        }
+        if ((!val)&&(e.key != ' ')) {
+            e.preventDefault();
+        }
+    });
+    apellido.addEventListener('paste', function(e) {
+        e.preventDefault()
+    });
+    apellido.addEventListener('dragover', function(e) {
+        e.preventDefault()
+    });
+
+    var telefono = document.getElementById('id_telefono');
+    telefono.value = +58;
+    telefono.addEventListener('keypress', function(e) {
+        if (document.getElementById('id_telefono').value.length + 1 == 13 || e.key == 'e' || e.key == '+' || e.key == '-') {
+            e.preventDefault();
+        }
+    });
+
+    {% for message in messages %}
+        Materialize.toast('{{message}}', 4000);
+    {% endfor %}
 </script>
 
 {% endblock %}

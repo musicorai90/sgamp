@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load auth_extras %}
+
+{% block content %}
+
+<div class="col s12 das-title">
+    <h1>Detalles de la asignacion</h1>
+</div>
+
+<div class="col s12">
+	<div class="row das-perfil">
+		<div class="col s12 m6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Nombre:</span>
+			<span>{{ object.id }}</span>
+		</div>
+		<div class="col s12 m6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Código:</span>
+			<span>{{ object.musico }}</span>
+		</div>
+		<div class="col s12 m6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Núcleo:</span>
+			<span>{{ object.instrumento }}</span>
+		</div>
+		<div class="col s12 m6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Fecha:</span>
+			<span>{{ object.fecha_ini }}</span>
+		</div>
+		<div class="col s12 m6 mb-c8 bb">
+			<span class="das-perfil-subtitle">Fecha:</span>
+			<span>{{ object.fecha_fin }}</span>
+		</div>
+		{% if object.status == 'A' %}
+		<div class="col s12 lan-btn-content">
+			<form method="POST">
+			    {% csrf_token %}
+			    <input type="submit" id="f-btn-submit" style="display: none;">
+			    <button type="button" class="lan-btn" id="asig-acep">Deasignar</button>
+			</form>
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}
